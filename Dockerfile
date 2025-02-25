@@ -17,7 +17,7 @@ RUN npm run build --prod
 FROM nginx:latest
 
 # Copia el build de Angular a la carpeta de Nginx
-COPY --from=build /app/dist/Fronted-Techniza /usr/share/nginx/html
+COPY --from=build /app/dist/sakai-ng/browser /usr/share/nginx/html
 
 # Copia la configuración de Nginx
 COPY nginx.conf /etc/nginx/nginx.conf

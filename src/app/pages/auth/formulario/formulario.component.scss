@@ -8,14 +8,13 @@
   color: var(--boder-colors-hover);
 }
 .avatar{
-
-  // background: url('../../../res/logo.png');
+  background: url('../../../../assets/Logo_Letras.webp');
   background-size: contain;
   background-repeat: no-repeat;
   width: 50%;
   height: 50px;
-  margin-bottom: 5.5rem;
-/*   visibility: hidden; */
+  padding-bottom: 8.5rem;
+  margin: auto;
 }
 .f-li{
     font-weight: 400;
@@ -78,6 +77,16 @@
   right: 0.50rem;
   top: 16px;
   background-color: transparent !important;
+}
+
+.eyeIcons {
+  i {
+    color: #00ACEF !important;
+    &:hover{
+      color: #F05A29 !important;
+    }
+  }
+
 }
 
 .transform {

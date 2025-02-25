@@ -12,20 +12,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ButtonModule, FloatLabelModule,IconFieldModule,InputIconModule,
     DatePickerModule, InputOtpModule, CommonModule, ],
-    template: `
-    <div class="bg-cover bg-center creativeBox" [ngClass]="{'customerBGntg': theme === 'primeone-dark', 'customerBGday': theme !== 'primeone-dark'}">
-    <div class="container">
-      <div class="card-item cristal">1</div>
-      <div class="card-item cristal">2</div>
-      <div class="card-item cristal">3</div>
-      <div class="card-item cristal">4</div>
-      <div class="card-item cristal">5</div>
-      <div class="card-item cristal">6</div>
-      <br><br><br><br>
-    </div>
-  </div>
-
-    `,
+  templateUrl: './slider.component.html',
   styleUrl: '../auth.component.scss',
 })
 export class SliderComponent implements OnInit {

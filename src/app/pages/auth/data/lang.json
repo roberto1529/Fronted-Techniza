@@ -1,0 +1,12 @@
+{
+    "es": {
+        "Titulo": "Bienvenido",
+        "Subtitulo": "OneCore (ERP)",
+        "msj_up_form": "Por favor, ingrese su usuario y contraseña",
+        "$usu": "Usuario",
+        "$usuPla":"Ingresa tu usuario",
+        "$pass": "Contraseña",
+        "$passPla": "Ingresa tu contraseña",
+        "$btnIngreso": "Ingresar"
+    }
+}

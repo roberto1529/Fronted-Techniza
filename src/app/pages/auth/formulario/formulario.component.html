@@ -1,0 +1,127 @@
+<form [formGroup]="fb" (ngSubmit)="onSubmit()" class="separador p5">
+  <div class="avatar" alt="OneCore"> </div>
+  <h3 class="text-center f-li titulo">{{Data.es.Titulo}}<br>{{Data.es._subtitulo}} </h3>
+  <p class="advertencia text-center ">Por favor, ingrese su usuario y contraseña</p>
+  <br>
+  <div class="field text-left">
+
+    <label class="labl">{{Data.es.$usu}}</label>
+    <input type="text" autocomplete="new-password" pInputText formControlName="usuario"
+      placeholder="{{Data.es.$usuPla}}"
+      class="input border-rad text-base surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full text-center" />
+
+    @if (mensajeError('usuario', 'required')) {
+    <small class="text-danger">El usuario es obligatorio</small>
+    }
+    @if (mensajeError('usuario', 'whitespace')) {
+    <small class="text-danger">No se permiten espacios en blanco</small>
+    }
+    @if (mensajeError('usuario', 'minlength')) {
+    <small class="text-danger">Mínimo 3 caracteres</small>
+    }
+  </div>
+  <div class="field text-left">
+    <label class="labl">{{Data.es.$pass}}</label>
+    <div class="relative">
+      <input [type]="isPassword ? 'password' : 'text'" autocomplete="new-password" pInputText formControlName="pass"
+        placeholder="{{Data.es.$passPla}}" class="input border-rad text-base
+               surface-overlay p-2 border-1 border-solid
+               surface-border border-round appearance-none
+               outline-none focus:border-primary w-full text-center" />
+      <button type="button" (mouseenter)="ViewPassword()" (mouseleave)="ViewPassword()"
+        class="absolute top-1/2 right-3 transform -translate-y-1-2 p-button p-button-rounded p-button-text surface-300">
+        <i [class]="eyeIcons"></i>
+      </button>
+    </div>
+    <!-- template errores -->
+    @if (mensajeError('pass', 'required')) {
+    <small class="text-danger">
+      El campo Contraseña es obligatorio
+    </small>
+    }
+
+    @if (mensajeError('pass', 'minlength')) {
+    <small class="text-danger">
+      La contraseña debe tener al menos 8 caracteres
+    </small>
+    }
+
+    @if (mensajeError('pass', 'uppercaseStart')) {
+    <small class="text-danger">
+      La contraseña debe comenzar con mayúscula
+    </small>
+    }
+
+    @if (mensajeError('pass', 'requiresNumber')) {
+    <small class="text-danger">
+      Debe contener al menos un número
+    </small>
+    }
+
+    @if (mensajeError('pass', 'requiresSpecialChar')) {
+    <small class="text-danger">
+      Debe incluir al menos un carácter especial
+    </small>
+    }
+  </div>
+
+
+  <br>
+  <p-toast position="top-right" [showTransformOptions]="'translateY(100%)'" [showTransitionOptions]="'1000ms'"
+    [hideTransitionOptions]="'1000ms'" [showTransformOptions]="'translateX(100%)'" />
+
+  <button pButton label="{{Data.es.$btnIngreso}}" type="Submit" icon="pi pi-sign-in" iconPos="right" class="ColorBtn"
+    [disabled]="fb.invalid"></button>
+
+</form>
+
+<p-dialog [modal]="true" [(visible)]="visible" [draggable]="false" closable="true" [style]="{ width: '45rem' }">
+
+  <ng-template #header>
+
+    <div class="text-center p-3 headIcon">
+      <i class="pi pi-verified otpIco"></i>
+
+      <h4 class="font-bold text-xl mb-2">Autenticación de tu cuenta</h4>
+      <p class="text-muted-color block mb-8">Por favor ingresa la clave dinamica <br> envia a su correo.</p>
+    </div>
+    <br>
+  </ng-template>
+
+  <div class="box">
+    <form [formGroup]="fb" (ngSubmit)="onValueOtp()">
+      <p-toast position="top-right" [showTransformOptions]="'translateY(100%)'" [showTransitionOptions]="'1000ms'"
+        [hideTransitionOptions]="'1000ms'" [showTransformOptions]="'translateX(100%)'" />
+
+      <div class="time">
+        <div class="titulo">
+          <h5>Tiempo restante</h5>
+        </div>
+        <div class="reloj">
+          <div class="contador">
+            <h4>{{ formattedTime }}</h4>
+          </div>
+          <div class="spiner">
+            <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
+          </div>
+        </div>
+      </div>
+      <p-inputotp [length]="4" formControlName="token">
+        <ng-template #input let-token let-events="events" let-index="index">
+          <input type="text" formControlName="token" [maxLength]="1" (input)="events.input($event)"
+            (keydown)="events.keydown($event)" [attr.value]="token" class="custom-otp-input" />
+          @if (index === 2) {
+          <div class="px-4">
+            <i class="pi pi-minus"></i>
+          </div>
+          }
+        </ng-template>
+      </p-inputotp>
+      <div class="flex justify-content-center mt-8 self-stretch">
+        <button type="submit" pButton label="Confirma" style="color: white;"> </button>
+      </div>
+    </form>
+  </div>
+
+
+</p-dialog>

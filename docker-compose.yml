@@ -1,9 +1,23 @@
-version: '3.8'
+# version: '3.8'
+
+# services:
+#   frontend:
+#     build: .
+#     container_name: fronted-techniza
+#     ports:
+#       - "80:80"
+#     restart: always
 
 services:
-  frontend:
-    build: .
+  nginx:
+    image: nginx:latest
     container_name: fronted-techniza
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt/live/admin.techniza.mx/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/live/admin.techniza.mx/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+      - ./html:/usr/share/nginx/html
     restart: always

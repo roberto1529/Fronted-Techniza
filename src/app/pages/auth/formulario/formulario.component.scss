@@ -46,8 +46,9 @@
 
 .ColorBtn{
   width: 100%;
-  background-color: #091F2C;
+  background-color: #231F20;
   color: white;
+  border: 1px solid #00ACEF;
 }
 .input{
   background-color: #F5F7FB !important;
@@ -94,10 +95,9 @@
 }
 .otpIco{
   font-size: 2.5rem;
-  background: #091F2C;
   border-radius: 100%;
-  color: white;
-  font-weight: 600;
+  color: #091F2C;
+  font-weight: 500;
   padding: 9px;
 }
 .headIcon{
@@ -112,6 +112,20 @@
   flex-wrap: nowrap;
   align-items: center;
 }
+
+.btncontinuar{
+  width: 155px;
+  background: #F05A29;
+  color: white;
+  font-weight: 600;
+  border: none;
+
+  &:hover{
+    background: #00ACEF;
+    color: #231F20;
+  }
+}
+
 .p-inputotp {
   gap: 0;
 }

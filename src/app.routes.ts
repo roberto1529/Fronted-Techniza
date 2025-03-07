@@ -1,23 +1,21 @@
 import { Routes } from '@angular/router';
 import { AppLayout } from './app/layout/component/app.layout';
 import { Dashboard } from './app/pages/dashboard/dashboard';
-import { Documentation } from './app/pages/documentation/documentation';
-import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
+import { AuthGuard } from './app/pages/auth/guard/auth.guard';
 
 export const appRoutes: Routes = [
     {
-        path: '',
+        path: 'dash',
         component: AppLayout,
+        canActivate: [AuthGuard], // Protege todas las rutas hijas de 'dash'
         children: [
             { path: '', component: Dashboard },
-            { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
-            { path: 'documentation', component: Documentation },
-            { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') }
+            { path: 'modulo', loadChildren: () => import('./app/pages/pages.routes').then(m => m.default) }
         ]
     },
-    { path: 'landing', component: Landing }, 
     { path: 'notfound', component: Notfound },
-    { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
-    { path: '**', redirectTo: '/notfound' }
+    { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes').then(m => m.default) },
+    { path: '', redirectTo: '/auth', pathMatch: 'full' }, // Redirige a la autenticación por defecto
+    { path: '**', redirectTo: '/notfound' } // Captura rutas inválidas
 ];

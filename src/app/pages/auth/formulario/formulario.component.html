@@ -77,16 +77,17 @@
 
 <p-dialog [modal]="true" [(visible)]="visible" [draggable]="false" closable="true" [style]="{ width: '45rem' }">
 
-  <ng-template #header>
+  <!-- <ng-template #header>
 
-    <div class="text-center p-3 headIcon">
-      <i class="pi pi-verified otpIco"></i>
 
-      <h4 class="font-bold text-xl mb-2">Autenticación de tu cuenta</h4>
-      <p class="text-muted-color block mb-8">Por favor ingresa la clave dinamica <br> envia a su correo.</p>
-    </div>
     <br>
-  </ng-template>
+  </ng-template> -->
+  <div class="text-center p-3 headIcon">
+    <i class="pi pi-lock otpIco"></i>
+
+    <h4 class="font-bold text-xl mb-2">Autenticación de tu cuenta</h4>
+    <p class="text-muted-color block mb-8">Por favor ingresa la clave dinamica envia a su correo.</p>
+  </div>
 
   <div class="box">
     <form [formGroup]="fb" (ngSubmit)="onValueOtp()">
@@ -99,10 +100,8 @@
         </div>
         <div class="reloj">
           <div class="contador">
-            <h4>{{ formattedTime }}</h4>
-          </div>
-          <div class="spiner">
-            <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
+            <br>
+            <h5>{{ formattedTime }}</h5>
           </div>
         </div>
       </div>
@@ -117,9 +116,9 @@
           }
         </ng-template>
       </p-inputotp>
-      <div class="flex justify-content-center mt-8 self-stretch">
-        <button type="submit" pButton label="Confirma" style="color: white;"> </button>
-      </div>
+      <br><br>
+      <button type="submit" class="btncontinuar" pButton label="Continuar"> </button>
+     
     </form>
   </div>
 

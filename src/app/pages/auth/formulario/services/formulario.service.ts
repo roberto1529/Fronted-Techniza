@@ -22,9 +22,7 @@ export class FormularioService {
 
   public Auth_Validar_token(data: any){
     // Encriptar datos antes de enviarlos
-    const encryptedData = {
-      data: this.cto.encryptData(data)
-    };
-    return this.http.post(this.endpoint, encryptedData);  // Enviar datos encriptados
+    const encryptedData = {data: this.cto.encryptData(data)};
+    return this.http.post(this.endpoint+'verificar_2fa', encryptedData);  // Enviar datos encriptados
   }
 }

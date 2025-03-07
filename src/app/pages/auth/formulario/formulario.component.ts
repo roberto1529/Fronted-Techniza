@@ -45,8 +45,7 @@ export class FormularioComponent implements OnInit  {
   formattedTime: string = '';
   Data: any;
   UserInfo!: UserInfoAuth;
-  constructor(
-    private formBuilder: FormBuilder,
+  constructor( private formBuilder: FormBuilder,
     private _router: Router,
     private service: FormularioService,
     private cto: EncryptionService,
@@ -72,8 +71,7 @@ export class FormularioComponent implements OnInit  {
 
   ngOnInit(): void {
     this.Data = data;
-    console.log('Datos Js', this.Data.es);
-
+    this.validarSesion();
   }
 
   // Validador personalizado para espacios en blanco
@@ -122,8 +120,7 @@ export class FormularioComponent implements OnInit  {
     );
   }
 
-  private ToastAlert(severity: string, summary: string,  detail?: any, sticky?: boolean
-  ) {
+  private ToastAlert(severity: string, summary: string,  detail?: any, sticky?: boolean) {
     this.msjServices.clear();
     this.msjServices.add({
       severity: `${severity}`,
@@ -178,7 +175,7 @@ export class FormularioComponent implements OnInit  {
       this.service.Auth_Service(this.fb.value).subscribe((res: RespondeAuth) => {
         let response = this.cto.decryptData(res);
         const { id, correo, usuario } = response.data[0];
-        console.log('Respuesta servidor =>', response);
+        
         this.UserInfo = {
           usuario: usuario,
           id: id,
@@ -211,14 +208,20 @@ export class FormularioComponent implements OnInit  {
 
   public onValueOtp(): void{
 
-    this.service.Auth_Validar_token(this.fb.value).subscribe((res)=>{
+    this.service.Auth_Validar_token(this.fb.value).subscribe((res: any)=>{
+            
         let response = this.cto.decryptData(res);
-        console.log('Respueta de token',response);
+        console.log('otpres', response);
+        localStorage.setItem('token', res);
+        if (response.Status === 200) {
+          this.validarSesion();
+        }else{
+          this.ToastAlert('error', 'Error de autenticación', 'el codigo ingresado no es valido.')
+        }
 
     })
 
   }
-
 
   startCountdown() {
     // Detener cualquier temporizador previo
@@ -243,7 +246,6 @@ export class FormularioComponent implements OnInit  {
     }, 1000);
   }
 
-
   updateFormattedTime() {
     const minutes = Math.floor(this.timeLeft / 60);
     const seconds = this.timeLeft % 60;
@@ -254,5 +256,13 @@ export class FormularioComponent implements OnInit  {
     return num < 10 ? `0${num}` : `${num}`;
   }
 
+
+  private validarSesion(): void{
+    const isAuthenticated = !!localStorage.getItem('token'); // Cambia esto según tu lógica de autenticación
+    
+    if (isAuthenticated) {
+      this._router.navigate(['dash/']);
+    }
+  }
 
 }

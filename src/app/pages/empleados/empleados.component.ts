@@ -1,4 +1,4 @@
-import { Component, inject, isDevMode, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -12,7 +12,7 @@ import { empleadosDto, usuarioDto } from './types/dto.interface';
 import { EmpleadosService } from './services/empleados.service';
 import { EncryptionService } from '../../shared/encryption.interceptor';
 import { ButtonModule } from 'primeng/button';
-import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
@@ -96,11 +96,6 @@ export class EmpleadosComponent implements OnInit {
     this.form.get('nombre')?.valueChanges.subscribe(() => this.generarUsuario());
     this.form.get('papellido')?.valueChanges.subscribe(() => this.generarUsuario());
 
-    if (isDevMode()) {
-      console.log("Modo de desarrollo");
-    } else {
-      console.log("Modo de producción");
-    }
   }
 
   private getData() {
@@ -283,6 +278,6 @@ export class EmpleadosComponent implements OnInit {
 
 
   }
-  
+ 
 
 }

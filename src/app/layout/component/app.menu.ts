@@ -23,7 +23,7 @@ export class AppMenu {
     constructor(private crypto: EncryptionService){
         const  jsonData = this.crypto.decryptData(this.local);
         this.Data  = jsonData.data.data.datos[0];    
-        // console.log(this.Data);
+        
         if (this.Data.tipo === 1) {
             this.menuAdmin()
         }
@@ -54,7 +54,7 @@ export class AppMenu {
                             {
                                 label: 'Clientes',
                                 icon: 'pi pi-fw pi-address-book',
-                                routerLink: ['/auth/error']
+                                routerLink: ['/dash/modulo/clientes']
                             },
                             {
                                 label: 'Access Denied',

@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { EncryptionService } from '../../../../shared/encryption.interceptor';
+import { API_ENDPOINT } from '../../../../shared/env/endpoints';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FormularioService {
-  endpoint: string = 'http://localhost:3000/auth/v1/'
+  protected endpoint: string = `${API_ENDPOINT}auth/v1/`;
 
   constructor(private http: HttpClient, private readonly cto: EncryptionService) {}
 

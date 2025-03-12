@@ -15,6 +15,7 @@ import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import * as data from '../data/lang.json'
 import { EncryptionService } from '../../../shared/encryption.interceptor';
+import { CustomValidators } from '../../../shared/validator/validators';
 
 @Component({
   selector: 'sub-app-formulario',
@@ -55,13 +56,13 @@ export class FormularioComponent implements OnInit  {
       usuario: ['', [
         Validators.required,
         Validators.minLength(3),
-        this.noWhitespaceValidator // Validador personalizado para espacios
+        CustomValidators.noWhitespaceValidator // Validador personalizado para espacios
       ]],
       id_user:[],
       pass: ['', [
         Validators.required,
         Validators.minLength(8),
-        this.passwordValidator // Validador personalizado
+        CustomValidators.passwordValidator // Validador personalizado
       ]],
       passcryto: [],
       // email: ['', [Validators.required, Validators.email]],
@@ -72,45 +73,6 @@ export class FormularioComponent implements OnInit  {
   ngOnInit(): void {
     this.Data = data;
     this.validarSesion();
-  }
-
-  // Validador personalizado para espacios en blanco
-  noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value as string;
-
-    if (!value) return null;
-
-    // Verifica si hay espacios en cualquier posición
-    const hasWhitespace = /\s/.test(value);
-
-    return hasWhitespace ? { whitespace: true } : null;
-  }
-  // Función de validación personalizada
-  passwordValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value;
-
-    if (!value) return null;
-
-    const validationErrors: ValidationErrors = {};
-
-    // 1. Primera letra mayúscula
-    if (!/^[A-Z]/.test(value)) {
-      validationErrors['uppercaseStart'] = true;
-    }
-
-    // 2. Al menos un número
-    if (!/\d/.test(value)) {
-      validationErrors['requiresNumber'] = true;
-    }
-
-    // 3. Al menos un carácter especial (puedes modificar estos símbolos)
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value)) {
-      validationErrors['requiresSpecialChar'] = true;
-    }
-
-    // 4. Mínimo 8 caracteres (ya cubierto por Validators.minLength(8))
-
-    return Object.keys(validationErrors).length > 0 ? validationErrors : null;
   }
 
   public mensajeError(campo: string, error: string): boolean {

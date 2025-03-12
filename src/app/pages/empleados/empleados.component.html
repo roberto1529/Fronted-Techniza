@@ -1,4 +1,5 @@
 <div class="card">
+  <p-toast />
     <p-table #dt2 
             [value]="usuarios" 
             dataKey="id"
@@ -16,6 +17,7 @@
             'estado']"
             [tableStyle]="{ 'min-width': '75rem' }">
         <ng-template #header>
+          
             <tr>
                 <th>#</th>
                 <th>Nombre</th>
@@ -27,8 +29,8 @@
             </tr>
         </ng-template>
         <ng-template #caption>
-            <div class="flex">
-                <p-button label="Crear" [outlined]="true" icon="pi pi-user-plus" />
+            <div class="flex gap-2">
+                <p-button label="Crear" [outlined]="true" icon="pi pi-user-plus" (click)="formModal('Crear empleado')" />
                 <p-button label="limpiar" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
                 <p-iconfield iconPosition="left" class="ml-auto">
                     <form [formGroup]="form">
@@ -42,9 +44,9 @@
                 </p-iconfield>
             </div>
         </ng-template>
-        <ng-template #body let-datos>
-            <tr>
-                <td>{{ datos.id }}</td>
+        <ng-template #body let-datos let-i="rowIndex">
+          <tr>
+                <td>{{ i+1 }}</td>
                 <td>{{ datos.nombre }} {{ datos.apellido1 }}</td>
                 <td>{{ datos.usuario }}</td>
                 <td>{{ datos.correo }}</td>
@@ -59,9 +61,15 @@
                         flex-direction: row;
                         align-content: center;
                         justify-content: flex-start;
-                        align-items: center;">
-                        <p-button icon="pi pi-pencil"  severity="warn" pTooltip="Editar" tooltipPosition="bottom"/>
-                        <p-toggleswitch formControlName="checked" pTooltip="Activar" tooltipPosition="bottom" />
+                        align-items: center;     gap: 8px;">
+                        <p-button icon="pi pi-pencil"  severity="warn" pTooltip="Editar" tooltipPosition="bottom" (click)="formModal('Editar empleado', datos)"/>
+                        <p-toggleswitch 
+                          pTooltip="{{ datos.estado ? 'Activo' : 'Inactivo' }}" 
+                          tooltipPosition="bottom" 
+                          [formControl]="getEstadoControl(datos)" 
+                          (change)="onEstadoChange(datos)" 
+                        />
+
                     </form>
 
                 </td>
@@ -71,3 +79,78 @@
         </ng-template>
     </p-table>
 </div>
+
+
+<p-dialog [header]="TituloForm" [maximizable]="false" [draggable]="false" [modal]="true" 
+          [(visible)]="visible" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <form [formGroup]="form">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-2">
+            <label for="nombre">Nombre</label>
+            <input pInputText id="nombre" formControlName="nombre" autocomplete="off" />
+            @for (error of getFieldErrors('nombre'); track error) {
+              <small class="text-red-500">{{ error }}</small>
+            }
+          </div>
+      
+          <div class="flex flex-col gap-2">
+            <label for="papellido">Primer apellido</label>
+            <input pInputText id="papellido" formControlName="papellido" autocomplete="off" />
+            @for (error of getFieldErrors('papellido'); track error) {
+              <small class="text-red-500">{{ error }}</small>
+            }
+          </div>
+      
+          <div class="flex flex-col gap-2">
+            <label for="sapellido">Segundo apellido</label>
+            <input pInputText id="sapellido" formControlName="sapellido" autocomplete="off" />
+            @for (error of getFieldErrors('sapellido'); track error) {
+              <small class="text-red-500">{{ error }}</small>
+            }
+          </div>
+      
+          <div class="flex flex-col gap-2">
+            <label for="correo">Correo</label>
+            <input pInputText  formControlName="correo" autocomplete="off" />
+            @for (error of getFieldErrors('correo'); track error) {
+              <small class="text-red-500">{{ error }}</small>
+            }
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="correo">Contraseña</label>
+            <input pInputText  formControlName="pass" autocomplete="off" placeholder="Debe ingresa una nueva clave" />
+            @for (error of getFieldErrors('pass'); track error) {
+              <small class="text-red-500">{{ error }}</small>
+            }
+          </div>
+       
+
+          <div class="flex flex-col gap-2">
+            <label for="rol">Rol</label>
+            <p-select formControlName="rol" [options]="roles" optionValue="id" optionLabel="nombre" placeholder="Seleccione un rol"></p-select>
+            @for (error of getFieldErrors('rol'); track error) {
+              <small class="text-red-500">{{ error }}</small>
+            }
+          </div>
+      
+          <div class="flex flex-col gap-2">
+            <label for="usuario">Usuario</label>
+            <input pInputText id="usuario" formControlName="usuario" autocomplete="off" readonly />
+          </div>
+        </div>
+      
+        <br /><br />
+      
+        <div class="flex justify-center">
+          @if(TituloForm === 'Crear empleado'){
+            <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onCrearEmpleado()" />
+          }
+          @if(TituloForm !== 'Crear empleado'){
+          <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onEditarEmpleado()" />
+          }
+        </div>
+        <p-toast />
+      </form>
+      
+</p-dialog>

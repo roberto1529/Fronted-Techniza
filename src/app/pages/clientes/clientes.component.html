@@ -9,30 +9,47 @@
               [rowsPerPageOptions]="[10, 25, 50]"
               [loading]="loading"
               [paginator]="true"
-              [globalFilterFields]="['id',
-              'nombre',
-              'apellido1',
+              [globalFilterFields]="['apellido1',
               'apellido2',
-              'fecha_reg',
+              'ciudad',
+              'codigo_postal',
               'correo',
-              'usuario',
-              'estado']"
-              [tableStyle]="{ 'min-width': '75rem' }">
-          <ng-template #header>
+              'direccion',
+              'empleado',
+              'empresa',
+              'estado',
+              'fecha_reg',
+              'id',
+              'id_ciudad',
+              'id_pais',
+              'id_usu_reg',
+              'nombre',
+              'pais',
+              'rfc',
+              'telefono']"
+            [tableStyle]="{ 'min-width': '100rem', 'max-width': '150rem', 'width': '100%' }">
+            <ng-template #header>
             
               <tr>
-                  <th>#</th>
-                  <th>Nombre</th>
-                  <th>Usuario</th>
-                  <th>Correo</th>
-                  <th>Estado</th>
-                  <th>Fecha de Registro</th>
-                  <th>Acciones</th>
+                <th style="min-width: 2rem;  max-width: 5rem;">#</th>
+                <th style="min-width: 12rem; max-width: 15rem;">Nombre</th>
+                <th style="min-width: 10rem; max-width: 12rem;">Teléfono</th>
+                <th style="min-width: 15rem; max-width: 18rem;">Correo</th>
+                <th style="min-width: 10rem; max-width: 15rem;">Dirección</th>
+                <th style="min-width: 10rem; max-width: 15rem;">Ciudad</th>
+                <th style="min-width: 8rem; max-width:  10rem;">País</th>
+                <th style="min-width: 4rem;  max-width: 8rem;">Código postal</th>
+                <th style="min-width: 10rem; max-width: 12rem;">RFC</th>
+                <th style="min-width: 10rem; max-width: 16rem;">Empresa</th>
+                <th style="min-width: 12rem; max-width: 16rem;">Empleado</th>
+                <th style="min-width: 7rem;  max-width: 8rem;">Estado</th>
+                <th style="min-width: 15rem; max-width: 18rem;">Fecha de Registro</th>
+                <th style="min-width: 12rem; max-width: 15rem;">Acciones</th>
               </tr>
           </ng-template>
           <ng-template #caption>
               <div class="flex gap-2">
-                  <p-button label="Crear" [outlined]="true" icon="pi pi-user-plus" (click)="formModal('Crear empleado')" />
+                  <p-button label="Crear" [outlined]="true" icon="pi pi-user-plus" (click)="formModal('Crear cliente')" />
                   <p-button label="limpiar" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
                   <p-iconfield iconPosition="left" class="ml-auto">
                       <form [formGroup]="form">
@@ -49,9 +66,16 @@
           <ng-template #body let-datos let-i="rowIndex">
             <tr>
                   <td>{{ i+1 }}</td>
-                  <td>{{ datos.nombre }} {{ datos.apellido1 }}</td>
-                  <td>{{ datos.usuario }}</td>
+                  <td>{{ datos.nombre }} {{ datos.apellido1 }}  {{ datos.apellido2 }}</td>
+                  <td>{{ datos.telefono }}</td>
                   <td>{{ datos.correo }}</td>
+                  <td>{{ datos.direccion }}</td>
+                  <td>{{ datos.ciudad }}</td>
+                  <td>{{ datos.pais }}</td>
+                  <td>{{ datos.codigo_postal }}</td>
+                  <td>{{ datos.rfc }}</td>
+                  <td>{{ datos.empresa }}</td>
+                  <td>{{ datos.empleado }}</td>
                   <td><p-tag
                       [value]="getStatusNombre(datos.estado)"
                       [severity]="getSeverity(datos.estado)" />
@@ -64,7 +88,7 @@
                           align-content: center;
                           justify-content: flex-start;
                           align-items: center;     gap: 8px;">
-                          <p-button icon="pi pi-pencil"  severity="warn" pTooltip="Editar" tooltipPosition="bottom" (click)="formModal('Editar empleado', datos)"/>
+                          <p-button icon="pi pi-pencil"  severity="warn" pTooltip="Editar" tooltipPosition="bottom" (click)="formModal('Editar cliente', datos)"/>
                           <p-toggleswitch 
                             pTooltip="{{ datos.estado ? 'Activo' : 'Inactivo' }}" 
                             tooltipPosition="bottom" 
@@ -94,62 +118,81 @@
                 <small class="text-red-500">{{ error }}</small>
               }
             </div>
-        
-            <div class="flex flex-col gap-2">
-              <label for="papellido">Primer apellido</label>
-              <input pInputText id="papellido" formControlName="papellido" autocomplete="off" />
-              @for (error of getFieldErrors('papellido'); track error) {
-                <small class="text-red-500">{{ error }}</small>
-              }
-            </div>
-        
-            <div class="flex flex-col gap-2">
-              <label for="sapellido">Segundo apellido</label>
-              <input pInputText id="sapellido" formControlName="sapellido" autocomplete="off" />
-              @for (error of getFieldErrors('sapellido'); track error) {
-                <small class="text-red-500">{{ error }}</small>
-              }
-            </div>
-        
             <div class="flex flex-col gap-2">
               <label for="correo">Correo</label>
-              <input pInputText  formControlName="correo" autocomplete="off" />
+              <input pInputText id="telefono" formControlName="correo" autocomplete="off" />
               @for (error of getFieldErrors('correo'); track error) {
+                <small class="text-red-500">{{ error }}</small>
+              }
+            </div>
+        
+            <div class="flex flex-col gap-2">
+              <label for="telefono">Telefono</label>
+              <p-inputnumber inputId="integeronly" formControlName="telefono" autocomplete="off" />
+              @for (error of getFieldErrors('telefono'); track error) {
+                <small class="text-red-500">{{ error }}</small>
+              }
+            </div>
+            
+        
+            <div class="flex flex-col gap-2">
+              <label for="empresa">Empresa</label>
+              <input pInputText id="empresa" formControlName="empresa" autocomplete="off" />
+              @for (error of getFieldErrors('empresa'); track error) {
+                <small class="text-red-500">{{ error }}</small>
+              }
+            </div>
+        
+            <div class="flex flex-col gap-2">
+              <label for="rfc">RFC</label>
+              <input pInputText  formControlName="rfc" autocomplete="off" />
+              @for (error of getFieldErrors('rfc'); track error) {
                 <small class="text-red-500">{{ error }}</small>
               }
             </div>
   
             <div class="flex flex-col gap-2">
-              <label for="correo">Contraseña</label>
-              <input pInputText  formControlName="pass" autocomplete="off" placeholder="Debe ingresa una nueva clave" />
-              @for (error of getFieldErrors('pass'); track error) {
+              <label for="direccion">Dirección</label>
+              <input pInputText  formControlName="direccion" autocomplete="direccion"/>
+              @for (error of getFieldErrors('direccion'); track error) {
                 <small class="text-red-500">{{ error }}</small>
               }
             </div>
          
   
             <div class="flex flex-col gap-2">
-              <label for="rol">Rol</label>
-              <p-select formControlName="rol" [options]="roles" optionValue="id" optionLabel="nombre" placeholder="Seleccione un rol"></p-select>
-              @for (error of getFieldErrors('rol'); track error) {
+              <label for="pais">País</label>
+              <p-select formControlName="pais" [options]="paises" (onChange)="OnchangeCity(form.value.pais)" optionValue="id" optionLabel="nopmbre" placeholder="Seleccione"></p-select>
+              @for (error of getFieldErrors('pais'); track error) {
+                <small class="text-red-500">{{ error }}</small>
+              }
+            </div>
+            
+            <div class="flex flex-col gap-2">
+              <label for="ciudad">Ciudad</label>
+              <p-select formControlName="ciudad" [filter]="true" [options]="ciudadFiltrada" optionValue="id" optionLabel="ciudad" placeholder="Seleccione"></p-select>
+              @for (error of getFieldErrors('pais'); track error) {
                 <small class="text-red-500">{{ error }}</small>
               }
             </div>
         
             <div class="flex flex-col gap-2">
-              <label for="usuario">Usuario</label>
-              <input pInputText id="usuario" formControlName="usuario" autocomplete="off" readonly />
+              <label for="codpostal">Código postal</label>
+              <input pInputText  formControlName="codpostal" autocomplete="direccion"/>
+              @for (error of getFieldErrors('codpostal'); track error) {
+                <small class="text-red-500">{{ error }}</small>
+              }
             </div>
           </div>
         
           <br /><br />
         
           <div class="flex justify-center">
-            @if(TituloForm === 'Crear empleado'){
-              <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onCrearEmpleado()" />
+            @if(TituloForm === 'Crear cliente'){
+              <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onCrear()" />
             }
-            @if(TituloForm !== 'Crear empleado'){
-            <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onEditarEmpleado()" />
+            @if(TituloForm !== 'Crear cliente'){
+            <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onEditar()" />
             }
           </div>
           <p-toast />

@@ -18,3 +18,15 @@ export interface clientesDto {
 	empleado:string;
 	fecha_reg: any;
 }
+
+export interface ClientePaisDto {
+	id: number;
+	nopmbre: string;
+}
+
+
+export interface ClienteCiudadDto {
+	id: number;
+	ciudad: string;
+	id_pais : number;
+}

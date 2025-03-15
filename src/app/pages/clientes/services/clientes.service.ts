@@ -21,7 +21,7 @@ export class ClienteService {
   public SetUser(dato: any){
     let datos = this.crypto.encryptData(dato);
     const send = {data: datos}
-    return this.http.post(this.endpoint+'/CrearUsu', send);
+    return this.http.post(this.endpoint+'/CrearDatos', send);
   }
 
   public SetEstado(dato: any){
@@ -33,7 +33,7 @@ export class ClienteService {
   public PutUser(dato: any){
     let datos = this.crypto.encryptData(dato);
     const send = {data: datos}
-    return this.http.put(this.endpoint+'/ActualizarUsu', send);
+    return this.http.put(this.endpoint+'/ActualizarDatos', send);
   }
 
 }

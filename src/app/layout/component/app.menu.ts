@@ -56,11 +56,11 @@ export class AppMenu {
                                 icon: 'pi pi-fw pi-address-book',
                                 routerLink: ['/dash/modulo/clientes']
                             },
-                            {
-                                label: 'Access Denied',
-                                icon: 'pi pi-fw pi-lock',
-                                routerLink: ['/auth/access']
-                            }
+                            // {
+                            //     label: 'Access Denied',
+                            //     icon: 'pi pi-fw pi-lock',
+                            //     routerLink: ['/auth/access']
+                            // }
                         ]
                     },
                     {
@@ -76,7 +76,7 @@ export class AppMenu {
                     {
                         label: 'Productos',
                         icon: 'pi pi-box',
-                        routerLink: ['/pages/crud']
+                        routerLink: ['/dash/modulo/productos']
                     },
                     {
                         label: 'Not Found',

@@ -56,9 +56,9 @@ export class ProductosComponent implements OnInit {
 
   // Declaracion de formulario reactivo
   form = this.formBuilder.group({
-    id: [''],
+    id: [0],
     buscar: [''],
-    marca: ['', [
+    marca: [0, [
       Validators.required,
     ]],
     modelo: ['', [
@@ -73,10 +73,10 @@ export class ProductosComponent implements OnInit {
       // Validators.pattern(/^[0-9]+$/),
       // CustomValidators.noWhitespaceValidator,
     ]],
-    costo: [null, [
+    costo: [0, [
       Validators.required,
     ]],
-    ganancia: [null, [
+    ganancia: [0, [
       Validators.required,
     ]],
     utilidad: [0, [
@@ -97,9 +97,7 @@ export class ProductosComponent implements OnInit {
   private getData() {
     this.serve.getAll().subscribe((res: any) => {
       let response = this.crypto.decryptData(res);
-      this.productos = response.data.productos;
-      console.log(this.productos);
-      
+      this.productos = response.data.productos;      
       this.marcas = response.data.marcas;
       this.loading = false;
     });
@@ -153,13 +151,24 @@ export class ProductosComponent implements OnInit {
     return null;
   }
 
-  formModal(titulo: string, data?: any): void {
-
+  formModal(titulo: string, data?: DatosTableDto): void {
+    console.log('data set', data);
+    
     this.TituloForm = titulo;    
     this.visible = !this.visible;
     if (titulo === 'Editar producto') {
-      // setTimeout(() => {
-      // }, 0);
+      setTimeout(() => {
+          this.form.patchValue({
+            id: data?.id,
+            marca: data?.id_marca,
+            modelo: data?.modelo,
+            descripcion: data?.descripcion,
+            costo: data?.costo,
+            utilidad: data?.utilidad,
+            ganancia: data?.ganancia,
+            venta: data?.venta
+          });
+      }, 0);
     } else {
       this.form.reset();
     }
@@ -167,8 +176,6 @@ export class ProductosComponent implements OnInit {
   }
 
   public onCrear(): void {
-
-    console.log(this.form.value);
 
     this.serve.SetData(this.form.value).subscribe((res) => {
       let response = this.crypto.decryptData(res);
@@ -234,20 +241,25 @@ export class ProductosComponent implements OnInit {
   }
 
   public calcularValores(){
-      const { costo, ganancia }: any = this.form.value
-      console.log( costo, ganancia);
+      const { costo, ganancia }: any = this.form.value;      
+
+      if (typeof costo === 'number' && costo >= 0 && typeof ganancia === 'number' && ganancia >= 0) {
+        const porcentaje = ganancia / 100;
+        const utilidad = Number((costo * porcentaje).toFixed(2));
+        const venta = costo + utilidad;
       
-      const porcenta = ganancia / 100;
-      let utilidad = costo * porcenta;
-      utilidad = Number(utilidad.toFixed(2));
-      const venta = costo + utilidad; 
-  
-      this.form.patchValue({
-        utilidad: utilidad,
-        venta: venta
-      });
+        this.form.patchValue({ utilidad, venta });
+      } else {
+        this.form.patchValue({
+          costo: null,
+          ganancia: null,
+          utilidad: null,
+          venta: null
+        });
+      }
+      
+      
+
   }
   
-
-
 }

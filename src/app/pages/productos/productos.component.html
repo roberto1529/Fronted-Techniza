@@ -9,31 +9,25 @@
               [rowsPerPageOptions]="[10, 25, 50]"
               [loading]="loading"
               [paginator]="true"
-              [globalFilterFields]="['apellido1',
-              'apellido2',
-              'ciudad',
-              'codigo_postal',
-              'correo',
-              'direccion',
-              'empleado',
-              'empresa',
+              [globalFilterFields]="['id',
+              'id_marca',
+              'marca',
+              'modelo',
+              'descripcion',
+              'costo',
+              'ganancia',
+              'utilidad',
+              'venta',
               'estado',
-              'fecha_reg',
-              'id',
-              'id_ciudad',
-              'id_pais',
-              'id_usu_reg',
-              'nombre',
-              'pais',
-              'rfc',
-              'telefono']"
+              'fecha_reg']"
+            
             [tableStyle]="{ 'min-width': '100rem', 'max-width': '150rem', 'width': '100%' }">
             <ng-template #header>
             
               <tr>
                 <th style="min-width: 2rem; max-width: 5rem;">#</th>
             <th style="min-width: 12rem; max-width: 15rem;">Marca</th>
-            <th style="min-width: 10rem; max-width: 12rem;">Modelo</th>
+            <th style="min-width: 15rem; max-width: 18rem;">Modelo</th>
             <th style="min-width: 15rem; max-width: 18rem;">Descripción</th>
             <th style="min-width: 10rem; max-width: 15rem;">Costo</th>
             <th style="min-width: 10rem; max-width: 15rem;">Ganancia</th>

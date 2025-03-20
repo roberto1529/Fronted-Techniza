@@ -56,32 +56,17 @@ export class AppMenu {
                                 icon: 'pi pi-fw pi-address-book',
                                 routerLink: ['/dash/modulo/clientes']
                             },
-                            // {
-                            //     label: 'Access Denied',
-                            //     icon: 'pi pi-fw pi-lock',
-                            //     routerLink: ['/auth/access']
-                            // }
                         ]
-                    },
-                    {
-                        label: 'Cotizaciones',
-                        icon: 'pi pi-table',
-                        routerLink: ['/pages/crud']
                     },
                     {
                         label: 'Facturas',
                         icon: 'pi pi-file-pdf',
-                        routerLink: ['/pages/crud']
+                        routerLink: ['/dash/modulo/facturas']
                     },
                     {
                         label: 'Productos',
                         icon: 'pi pi-box',
                         routerLink: ['/dash/modulo/productos']
-                    },
-                    {
-                        label: 'Not Found',
-                        icon: 'pi pi-fw pi-exclamation-circle',
-                        routerLink: ['/pages/notfound']
                     },
                 ]
             }

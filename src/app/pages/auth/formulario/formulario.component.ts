@@ -16,6 +16,7 @@ import { DialogModule } from 'primeng/dialog';
 import * as data from '../data/lang.json'
 import { EncryptionService } from '../../../shared/encryption.interceptor';
 import { CustomValidators } from '../../../shared/validator/validators';
+import { AppFloatingConfigurator } from "../../../layout/component/app.floatingconfigurator";
 
 @Component({
   selector: 'sub-app-formulario',
@@ -28,8 +29,9 @@ import { CustomValidators } from '../../../shared/validator/validators';
     InputIconModule,
     InputOtpModule,
     ToastModule,
-    DialogModule
-  ],
+    DialogModule,
+    AppFloatingConfigurator
+],
   templateUrl: './formulario.component.html',
   styleUrl: './formulario.component.scss',
   providers: [MessageService],

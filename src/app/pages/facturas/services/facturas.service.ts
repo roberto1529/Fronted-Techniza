@@ -19,10 +19,10 @@ export class FacturasService {
     return this.http.post(this.endpoint+'/facturdos', send);
   }
 
-  public SetUser(dato: any){
+  public Setdara(dato: any){
     let datos = this.crypto.encryptData(dato);
     const send = {data: datos}
-    return this.http.post(this.endpoint+'/CrearUsu', send);
+    return this.http.post(this.endpoint+'/CrearDatos', send);
   }
 
   public SetEstado(dato: any){

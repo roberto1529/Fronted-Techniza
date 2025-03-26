@@ -201,17 +201,17 @@ export class FacturasComponent {
     public onCrear(): void {
         console.log(this.form.value);
 
-        // this.serve.SetUser(this.form.value).subscribe((res) => {
-        //   let response = this.crypto.decryptData(res);
-        //   if (response.Status === 200) {
-        //     this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
-        //     this.visible = false;
-        //     this.form.reset();
-        //     this.getData();
-        //   } else {
-        //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
-        //   }
-        // });
+        this.serve.Setdara(this.form.value).subscribe((res) => {
+          let response = this.crypto.decryptData(res);
+          if (response.Status === 200) {
+            this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
+            this.visible = false;
+            this.form.reset();
+            this.getData();
+          } else {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
+          }
+        });
     }
 
     public onEditar(): void {
@@ -261,12 +261,11 @@ export class FacturasComponent {
     }
 
     public async DetalleFactura(id: number) {
+        this.detallefact = [];
         let transform = { id: id };
-
         await this.serve.GetUser(transform).subscribe((res) => {
             let response = this.crypto.decryptData(res);
             this.detallefact = response.data.datos;
-            console.log(response);
         });
     }
 

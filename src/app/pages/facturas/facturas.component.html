@@ -90,6 +90,7 @@
                           align-content: center;
                           justify-content: flex-start;
                           align-items: center;     gap: 8px;">
+                          <p-button icon="pi pi-receipt"  severity="danger" pTooltip="Factura" tooltipPosition="bottom" (click)="generarFactoDocto(datos.id)"/>
                           <p-button icon="pi pi-pencil"  severity="warn" pTooltip="Editar" tooltipPosition="bottom" (click)="formModal('Editar factura', datos)"/>
                           <p-toggleswitch
                             pTooltip="{{ datos.estado ? 'Activo' : 'Inactivo' }}"

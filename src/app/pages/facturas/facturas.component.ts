@@ -199,12 +199,11 @@ export class FacturasComponent {
     }
 
     public onCrear(): void {
-        console.log(this.form.value);
-
         this.serve.Setdara(this.form.value).subscribe((res) => {
           let response = this.crypto.decryptData(res);
           if (response.Status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
+            this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data.msj });
+            this.generarFactoDocto(response.data.id);
             this.visible = false;
             this.form.reset();
             this.getData();
@@ -212,6 +211,19 @@ export class FacturasComponent {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
           }
         });
+    }
+
+    public generarFactoDocto(id: number){
+        console.log('docto id:', id );
+
+        this.serve.getFactura(id).subscribe((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'factura.pdf'; // Nombre del archivo
+            a.click();
+            window.URL.revokeObjectURL(url);
+          });
     }
 
     public onEditar(): void {

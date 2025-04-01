@@ -11,47 +11,53 @@ export class FacturasService {
   protected endpointrp: string = `${API_ENDPOINT_REPORT}`;
   constructor(private http: HttpClient, private crypto: EncryptionService) { }
 
-  public getAll(){
-      return this.http.get<any>(this.endpoint);
+  public getAll() {
+    return this.http.get<any>(this.endpoint);
   }
 
-  public GetUser(dato: any){
+  public GetUser(dato: any) {
     let datos = this.crypto.encryptData(dato);
-    const send = {data: datos}
-    return this.http.post(this.endpoint+'/facturdos', send);
+    const send = { data: datos }
+    return this.http.post(this.endpoint + '/facturdos', send);
   }
 
-  public Setdara(dato: any){
+  public Setdara(dato: any) {
     let datos = this.crypto.encryptData(dato);
-    const send = {data: datos}
-    return this.http.post(this.endpoint+'/CrearDatos', send);
+    const send = { data: datos }
+    return this.http.post(this.endpoint + '/CrearDatos', send);
   }
 
-  public SetEstado(dato: any){
+  public SetEstado(dato: any) {
     let datos = this.crypto.encryptData(dato);
-    const send = {data: datos}
-    return this.http.put(this.endpoint+'/UpdateEstado', send);
+    const send = { data: datos }
+    return this.http.put(this.endpoint + '/UpdateEstado', send);
   }
 
-  public PutUser(dato: any){
+  public PutData(dato: any) {
     let datos = this.crypto.encryptData(dato);
-    const send = {data: datos}
-    return this.http.put(this.endpoint+'/ActualizarUsu', send);
+    const send = { data: datos }
+    return this.http.put(this.endpoint + '/ActualizarDatos', send);
+  }
+
+  public GetdataProd(dato: any) {
+    let datos = this.crypto.encryptData(dato);
+    const send = { data: datos }
+    return this.http.post(this.endpoint + '/CargadorProductos', send);
   }
 
   // mdetodo de reporteador
 
-  getFactura(id: number): Observable<Blob> {
+  public getFactura(id: number): Observable<Blob> {
     return this.http.get(`${this.endpointrp}generate-fact/${id}`, {
       responseType: 'blob' // Especifica que la respuesta es un Blob (archivo binario)
     });
   }
-  
+
 
   // public GetDoctoFact(id: number){
 
 
-    
+
   //   return this.http.get(`${this.endpointrp}generate-fact/${id}`)
   //   .pipe(
   //     catchError((error: HttpErrorResponse) => {

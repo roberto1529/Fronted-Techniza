@@ -9,7 +9,7 @@
               [rowsPerPageOptions]="[10, 25, 50]"
               [loading]="loading"
               [paginator]="true"
-              [globalFilterFields]="[ 'id',
+              [globalFilterFields]="[ 'id','code_fact',
               'id_cliente',
               'cliente',
               'correo',
@@ -29,6 +29,7 @@
               <tr>
                 <th style="min-width: 2rem;  max-width: 5rem;">#</th>
                 <th style="min-width: 12rem; max-width: 15rem;">Cliente</th>
+                <th style="min-width: 12rem; max-width: 15rem;">Cod. Fact</th>
                 <th style="min-width: 10rem; max-width: 12rem;">Teléfono</th>
                 <th style="min-width: 15rem; max-width: 18rem;">Correo</th>
                 <th style="min-width: 10rem; max-width: 15rem;">Dirección</th>
@@ -62,6 +63,7 @@
           <ng-template #body let-datos let-i="rowIndex">
             <tr>
                   <td>{{ i+1 }}</td>
+                  <td>{{ datos.code_fact }}</td>
                   <td>{{ datos.cliente }}</td>
                   <td>{{ datos.telefono }}</td>
                   <td>{{ datos.correo }}</td>

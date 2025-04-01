@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -26,6 +26,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
     selector: 'app-facturas',
+    standalone: true,
     imports: [
         TableModule,
         ButtonModule,
@@ -61,7 +62,7 @@ export class FacturasComponent {
     empleadoInfo: any = localStorage.getItem('token');
     loading: boolean = true;
     visible: boolean = false;
-    @ViewChild('dt2') dt2!: Table; // Definir la referencia correctamente
+    @ViewChild('dt2') dt2!: Table;
     private formBuilder = inject(FormBuilder);
     TituloForm: string = '';
     errorMessages: Record<string, string> = {
@@ -145,16 +146,13 @@ export class FacturasComponent {
     }
 
     formatFecha(fechaStr: string): Date | null {
-        // Se asume que el formato es: HH:mm:ss.SSSSSS-OF
-        // Necesitamos extraer HH:mm:ss, los primeros 3 dígitos de milisegundos y el offset.
         const regex = /^(\d{2}:\d{2}:\d{2})\.(\d{3})\d*(-\d{2})$/;
         const match = fechaStr.match(regex);
 
         if (match) {
-            const timePart = match[1]; // Ej: "21:21:18"
-            const millis = match[2]; // Ej: "137"
-            const offsetHour = match[3]; // Ej: "-05"
-            // Se asume que el offset es en horas y se fija minutos en "00"
+            const timePart = match[1];
+            const millis = match[2];
+            const offsetHour = match[3];
             const isoString = `1970-01-01T${timePart}.${millis}${offsetHour}:00`;
             return new Date(isoString);
         }
@@ -163,127 +161,120 @@ export class FacturasComponent {
     }
 
     getProductosDisponibles(index: number): DetalleFact[] {
-        // Obtiene los IDs de productos ya seleccionados
         const productosSeleccionados = this.productos.controls.map((control) => control.get('producto')?.value);
-
-        // Filtra la lista excluyendo los productos ya seleccionados, excepto el del índice actual
-        return this.productos_list.filter((producto) => !productosSeleccionados.includes(producto.id) || producto.id === this.productos.at(index).get('producto')?.value);
+        return this.productos_list.filter((producto) => 
+            !productosSeleccionados.includes(producto.id) || 
+            producto.id === this.productos.at(index).get('producto')?.value
+        );
     }
 
+    // Método para mostrar el modal de formulario
     formModal(titulo: string, data?: any): void {
         this.TituloForm = titulo;
         this.visible = !this.visible;
+        
         if (titulo === 'Editar factura') {
+            console.log('Datos de entrada', data);
+            
             setTimeout(() => {
-                // this.form.patchValue({
-                //   id: data?.id,
-                //   nombre: data.nombre,
-                //   telefono: data.telefono,
-                //   correo: data.correo,
-                //   ciudad: data.id_ciudad,
-                //   pais: data?.id_pais,
-                //   empresa: data.empresa,
-                //   direccion: data.direccion,
-                //   rfc: data.rfc,
-                //   codpostal: data.codigo_postal
-                // });
-            }, 0);
+                const send = { id: data.id };
+                this.serve.GetdataProd(send).subscribe((res: any) => {
+                    let response = this.crypto.decryptData(res);
+                    
+                    // Limpia el FormArray existente
+                    this.productos.clear();
+                    
+                    // Actualiza los datos principales
+                    this.form.patchValue({
+                        id: data?.id,
+                        cliente: data.id_cliente,
+                        subtotal: data.subtotal,
+                        iva: data.iva,
+                        total: data.total
+                    });
+                  
+                    // Agrega los productos al FormArray
+                    response.data.datos.forEach((producto: any) => {
+                        const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
+                        const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
+                        
+                        const productoForm = this.formBuilder.group({
+                            producto: [producto.id_producto, Validators.required],
+                            cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
+                            subtotalItem: [subtotalItem]
+                        });
+                        
+                        // Configura los listeners para cambios
+                        this.configurarListenersDeProducto(productoForm);
+                        
+                        this.productos.push(productoForm);
+                    });
+                    
+                    // Recalcula los totales
+                    this.actualizarTotales();
+                });
+            }, 8);
         } else {
-            this.form.reset(); // Reinicia los valores del formulario
+            this.resetearFormulario();
+        }
+    }
 
-            // Vaciar el FormArray de productos
-            while (this.productos.length !== 0) {
-                this.productos.removeAt(0);
+    // Método para resetear el formulario
+    private resetearFormulario() {
+        this.form.reset();
+        this.productos.clear();
+    }
+
+    // Configura listeners para cambios en cantidad/producto
+    private configurarListenersDeProducto(productoForm: FormGroup) {
+        productoForm.get('cantidad')?.valueChanges.subscribe(() => {
+            const index = this.productos.controls.indexOf(productoForm);
+            if (index !== -1) {
+                this.actualizarProducto(index);
+            }
+        });
+        
+        productoForm.get('producto')?.valueChanges.subscribe(() => {
+            const index = this.productos.controls.indexOf(productoForm);
+            if (index !== -1) {
+                this.actualizarProducto(index);
+            }
+        });
+    }
+
+    // Método para actualizar un producto y recalcular totales
+    public actualizarProducto(index: number) {
+        if (this.productos.length > index) {
+            const productoForm = this.productos.at(index);
+            const cantidad = productoForm.get('cantidad')?.value;
+            const productoId = productoForm.get('producto')?.value;
+
+            // Buscar el producto en la lista
+            const productoEncontrado = this.productos_list.find(x => x.id === productoId);
+            
+            if (productoEncontrado) {
+                const subTotal = cantidad * Number(productoEncontrado.precio);
+                
+                // Actualizar solo el subtotalItem sin disparar eventos
+                productoForm.get('subtotalItem')?.setValue(subTotal, { emitEvent: false });
+                
+                // Recalcular totales
+                this.actualizarTotales();
             }
         }
     }
 
-    public onCrear(): void {
-        this.serve.Setdara(this.form.value).subscribe((res) => {
-          let response = this.crypto.decryptData(res);
-          if (response.Status === 200) {
-            this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data.msj });
-            this.generarFactoDocto(response.data.id);
-            this.visible = false;
-            this.form.reset();
-            this.getData();
-          } else {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
-          }
-        });
-    }
-
-    public generarFactoDocto(id: number){
-        console.log('docto id:', id );
-
-        this.serve.getFactura(id).subscribe((blob) => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'factura.pdf'; // Nombre del archivo
-            a.click();
-            window.URL.revokeObjectURL(url);
-          });
-    }
-
-    public onEditar(): void {
-        console.log(this.form.value);
-
-        // this.serve.PutUser(this.form.value).subscribe((res) => {
-        //   let response = this.crypto.decryptData(res);
-        //   if (response.Status === 200) {
-        //     this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
-        //     this.visible = false;
-        //     this.form.reset();
-        //     this.getData();
-        //   } else {
-        //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
-        //   }
-        // });
-    }
-    public mensajeError(campo: string, error: string): boolean {
-        const control = this.form.get(`${campo}`);
-        return control! && control.hasError(error) && (control.dirty || control.touched);
-    }
-
-    getFieldErrors(field: string): string[] {
-        const control = this.form.get(field);
-        if (!control || !control.errors || !control.touched) return [];
-
-        return Object.keys(control.errors).map((errorKey) => this.errorMessages[errorKey] || 'Error desconocido');
-    }
-
-    getEstadoControl(datos: any): FormControl {
-        return new FormControl(datos.estado);
-    }
-
-    onEstadoChange(datos: any) {
-        datos.estado = !datos.estado;
-        // this.serve.SetEstado(datos).subscribe((res: any) => {
-        //   let response = this.crypto.decryptData(res);
-        //   if (response.status === 200) {
-        //     this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
-        //     this.visible = false;
-        //     this.form.reset();
-        //     this.getData();
-        //   } else {
-        //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
-        //   }
-        // });
-    }
-
-    public async DetalleFactura(id: number) {
-        this.detallefact = [];
-        let transform = { id: id };
-        await this.serve.GetUser(transform).subscribe((res) => {
-            let response = this.crypto.decryptData(res);
-            this.detallefact = response.data.datos;
-        });
-    }
-
-    // Obtiene el FormArray de productos
-    get productos(): FormArray {
-        return this.form.get('productos') as FormArray;
+    // Método para actualizar todos los totales
+    private actualizarTotales() {
+        const subtotal = this.subtotal;
+        const iva = this.iva;
+        const total = this.total;
+        
+        this.form.patchValue({
+            subtotal: subtotal,
+            iva: iva,
+            total: total
+        }, { emitEvent: false });
     }
 
     // Método para agregar un nuevo producto
@@ -291,49 +282,28 @@ export class FacturasComponent {
         const productoForm = this.formBuilder.group({
             producto: ['', Validators.required],
             cantidad: [null, [Validators.required, Validators.min(1)]],
-            subtotalItem: ['']
+            subtotalItem: [0]
         });
 
+        // Configura los listeners para cambios
+        this.configurarListenersDeProducto(productoForm);
+        
         this.productos.push(productoForm);
     }
 
     // Método para eliminar un producto por índice
     public eliminarProducto(index: number) {
         this.productos.removeAt(index);
+        this.actualizarTotales();
     }
 
-    // Método para actualizar un producto en una posición exacta
-    public actualizarProducto(index: number) {
-        if (this.productos.length > index) {
-            let cant = this.productos.at(index).get('cantidad')?.value;
-            let precioId = this.productos.at(index).get('producto')?.value;
-
-            // Buscar el producto en la lista
-            let productoEncontrado: any = this.productos_list.find((x) => x.id === precioId);
-            console.log(cant, Number(productoEncontrado.precio));
-            let subTotal = cant * Number(productoEncontrado.precio);
-            this.productos.at(index).patchValue({
-                subtotalItem: subTotal
-            });
-
-            this.form.patchValue({
-                subtotal: this.subtotal,
-                iva: this.iva,
-                total: this.total
-            });
-
-            console.log('totales', this.productos.value);
-        } else {
-            console.log('Índice fuera de rango');
-        }
-    }
     // Función para obtener el subtotal con máximo 2 decimales
     get subtotal(): number {
         const total = this.productos.controls.reduce((acc, producto) => {
             const subtotal = producto.get('subtotalItem')?.value || 0;
             return acc + subtotal;
         }, 0);
-        return parseFloat(total.toFixed(2)); // Redondea a 2 decimales
+        return parseFloat(total.toFixed(2));
     }
 
     // Función para calcular el IVA (16%) con 2 decimales
@@ -344,5 +314,81 @@ export class FacturasComponent {
     // Función para calcular el total (subtotal + IVA) con 2 decimales
     get total(): number {
         return parseFloat((this.subtotal + this.iva).toFixed(2));
+    }
+
+    // Obtiene el FormArray de productos
+    get productos(): FormArray {
+        return this.form.get('productos') as FormArray;
+    }
+
+    public onCrear(): void {
+        this.serve.Setdara(this.form.value).subscribe((res) => {
+            let response = this.crypto.decryptData(res);
+            if (response.Status === 200) {
+                this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data.msj });
+                this.generarFactoDocto(response.data.id);
+                this.visible = false;
+                this.form.reset();
+                this.getData();
+            } else {
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
+            }
+        });
+    }
+
+    public generarFactoDocto(id: number) {
+        this.serve.getFactura(id).subscribe((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'factura.pdf';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+    }
+
+    public onEditar(): void {
+        console.log('Formulario', this.form.value);
+        this.serve.PutData(this.form.value).subscribe((res: any)=>{
+            let response = this.crypto.decryptData(res);
+            if (response.Status === 200) {
+                this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data.msj });
+                this.generarFactoDocto(response.data.id);
+                this.visible = false;
+                this.form.reset();
+                this.getData();
+            } else {
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
+            }
+        })
+    }
+
+    public mensajeError(campo: string, error: string): boolean {
+        const control = this.form.get(`${campo}`);
+        return control! && control.hasError(error) && (control.dirty || control.touched);
+    }
+
+    getFieldErrors(field: string): string[] {
+        const control = this.form.get(field);
+        if (!control || !control.errors || !control.touched) return [];
+        return Object.keys(control.errors).map((errorKey) => this.errorMessages[errorKey] || 'Error desconocido');
+    }
+
+    getEstadoControl(datos: any): FormControl {
+        return new FormControl(datos.estado);
+    }
+
+    onEstadoChange(datos: any) {
+        datos.estado = !datos.estado;
+        // Implementación de cambio de estado aquí
+    }
+
+    public async DetalleFactura(id: number) {
+        this.detallefact = [];
+        let transform = { id: id };
+        await this.serve.GetUser(transform).subscribe((res) => {
+            let response = this.crypto.decryptData(res);
+            this.detallefact = response.data.datos;
+        });
     }
 }

@@ -23,7 +23,7 @@ COPY --from=build /app/dist/sakai-ng/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expone el puerto 80
-EXPOSE 80
+EXPOSE 80 443
 
 # Inicia Nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -25,23 +25,52 @@
               'fecha_reg']"
             [tableStyle]="{ 'min-width': '100rem', 'max-width': '150rem', 'width': '100%' }">
             <ng-template #header>
-
               <tr>
-                <th style="min-width: 2rem;  max-width: 5rem;">#</th>
-                <th style="min-width: 12rem; max-width: 15rem;">Cliente</th>
-                <th style="min-width: 12rem; max-width: 15rem;">Cod. Fact</th>
-                <th style="min-width: 10rem; max-width: 12rem;">Teléfono</th>
-                <th style="min-width: 15rem; max-width: 18rem;">Correo</th>
-                <th style="min-width: 10rem; max-width: 15rem;">Dirección</th>
-                <!-- <th style="min-width: 10rem; max-width: 15rem;">Atención</th> -->
-                <th style="min-width: 8rem; max-width:  10rem;">Catindad Productos</th>
-                <th style="min-width: 4rem;  max-width: 8rem;">Subtotal</th>
-                <th style="min-width: 10rem; max-width: 12rem;">Iva</th>
-                <th style="min-width: 10rem; max-width: 16rem;">total</th>
-                <th style="min-width: 12rem; max-width: 16rem;">Estado de factura</th>
-                <th style="min-width: 7rem;  max-width: 8rem;">Estado</th>
-                <th style="min-width: 15rem; max-width: 18rem;">Fecha de Registro</th>
-                <th style="min-width: 12rem; max-width: 15rem;">Acciones</th>
+                  <th style="min-width: 2rem; max-width: 5rem;">
+                    #                    
+                  </th>
+                  <th style="min-width: 12rem; max-width: 15rem;" [pSortableColumn]="'code_fact'">Cod. Fact
+                      <p-sortIcon [field]="'code_fact'"></p-sortIcon>
+                      
+                  </th>
+                  <th style="min-width: 12rem; max-width: 15rem;" [pSortableColumn]="'cliente'">Cliente
+                      <p-sortIcon [field]="'cliente'"></p-sortIcon>
+                     
+                  </th>
+                  <th style="min-width: 10rem; max-width: 12rem;" [pSortableColumn]="'telefono'">Teléfono
+                      <p-sortIcon [field]="'telefono'"></p-sortIcon>
+                      
+                  </th>
+                  <th style="min-width: 15rem; max-width: 18rem;" [pSortableColumn]="'correo'">Correo
+                      <p-sortIcon [field]="'correo'"></p-sortIcon>
+
+                  </th>
+                  <th style="min-width: 10rem; max-width: 15rem;" [pSortableColumn]="'direccion'">Dirección
+                      <p-sortIcon [field]="'direccion'"></p-sortIcon>
+                     
+                  </th>
+                  <th style="min-width: 8rem; max-width: 10rem;">Cantidad Productos</th>
+                  <th style="min-width: 4rem; max-width: 8rem;" [pSortableColumn]="'subtotal'">Subtotal
+                      <p-sortIcon [field]="'subtotal'"></p-sortIcon>
+                     
+                  </th>
+                  <th style="min-width: 10rem; max-width: 12rem;" [pSortableColumn]="'iva'">Iva
+                      <p-sortIcon [field]="'iva'"></p-sortIcon>
+                     
+                  </th>
+                  <th style="min-width: 10rem; max-width: 16rem;" [pSortableColumn]="'total'">Total
+                      <p-sortIcon [field]="'total'"></p-sortIcon>
+                     
+                  </th>
+                  <th style="min-width: 12rem; max-width: 16rem;" [pSortableColumn]="'estado_nombre'">Estado de factura
+                      <p-sortIcon [field]="'estado_nombre'"></p-sortIcon>
+                     
+                  </th>
+                  <th style="min-width: 7rem; max-width: 8rem;">Estado</th>
+                  <th style="min-width: 15rem; max-width: 18rem;" [pSortableColumn]="'fecha_reg'">Fecha de Registro
+                      <p-sortIcon [field]="'fecha_reg'"></p-sortIcon>
+                  </th>
+                  <th style="min-width: 12rem; max-width: 15rem;">Acciones</th>
               </tr>
           </ng-template>
           <ng-template #caption>
@@ -94,6 +123,7 @@
                           align-items: center;     gap: 8px;">
                           <p-button icon="pi pi-receipt"  severity="danger" pTooltip="Factura" tooltipPosition="bottom" (click)="generarFactoDocto(datos.id)"/>
                           <p-button icon="pi pi-pencil"  severity="warn" pTooltip="Editar" tooltipPosition="bottom" (click)="formModal('Editar factura', datos)"/>
+                          <p-button icon="pi pi-copy" severity="info" pTooltip="Duplicar" tooltipPosition="bottom" (click)="formModal('Duplicar factura', datos)"/>
                           <p-toggleswitch
                             pTooltip="{{ datos.estado ? 'Activo' : 'Inactivo' }}"
                             tooltipPosition="bottom"

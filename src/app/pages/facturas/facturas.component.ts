@@ -169,55 +169,95 @@ export class FacturasComponent {
     }
 
     // Método para mostrar el modal de formulario
-    formModal(titulo: string, data?: any): void {
-        this.TituloForm = titulo;
-        this.visible = !this.visible;
+  // Método para mostrar el modal de formulario
+formModal(titulo: string, data?: any): void {
+    this.TituloForm = titulo;
+    this.visible = !this.visible;
+    
+    if (titulo === 'Editar factura') {
+        console.log('Datos de entrada', data);
         
-        if (titulo === 'Editar factura') {
-            console.log('Datos de entrada', data);
-            
-            setTimeout(() => {
-                const send = { id: data.id };
-                this.serve.GetdataProd(send).subscribe((res: any) => {
-                    let response = this.crypto.decryptData(res);
-                    
-                    // Limpia el FormArray existente
-                    this.productos.clear();
-                    
-                    // Actualiza los datos principales
-                    this.form.patchValue({
-                        id: data?.id,
-                        cliente: data.id_cliente,
-                        subtotal: data.subtotal,
-                        iva: data.iva,
-                        total: data.total
-                    });
-                  
-                    // Agrega los productos al FormArray
-                    response.data.datos.forEach((producto: any) => {
-                        const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
-                        const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
-                        
-                        const productoForm = this.formBuilder.group({
-                            producto: [producto.id_producto, Validators.required],
-                            cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
-                            subtotalItem: [subtotalItem]
-                        });
-                        
-                        // Configura los listeners para cambios
-                        this.configurarListenersDeProducto(productoForm);
-                        
-                        this.productos.push(productoForm);
-                    });
-                    
-                    // Recalcula los totales
-                    this.actualizarTotales();
+        setTimeout(() => {
+            const send = { id: data.id };
+            this.serve.GetdataProd(send).subscribe((res: any) => {
+                let response = this.crypto.decryptData(res);
+                
+                // Limpia el FormArray existente
+                this.productos.clear();
+                
+                // Actualiza los datos principales
+                this.form.patchValue({
+                    id: data?.id,
+                    cliente: data.id_cliente,
+                    subtotal: data.subtotal,
+                    iva: data.iva,
+                    total: data.total
                 });
-            }, 8);
-        } else {
-            this.resetearFormulario();
-        }
+              
+                // Agrega los productos al FormArray
+                response.data.datos.forEach((producto: any) => {
+                    const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
+                    const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
+                    
+                    const productoForm = this.formBuilder.group({
+                        producto: [producto.id_producto, Validators.required],
+                        cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
+                        subtotalItem: [subtotalItem]
+                    });
+                    
+                    // Configura los listeners para cambios
+                    this.configurarListenersDeProducto(productoForm);
+                    
+                    this.productos.push(productoForm);
+                });
+                
+                // Recalcula los totales
+                this.actualizarTotales();
+            });
+        }, 8);
+    } else if (titulo === 'Duplicar factura') {
+        console.log('Duplicando factura', data);
+        
+        setTimeout(() => {
+            const send = { id: data.id };
+            this.serve.GetdataProd(send).subscribe((res: any) => {
+                let response = this.crypto.decryptData(res);
+                
+                // Limpia el FormArray existente
+                this.productos.clear();
+                
+                // Actualiza los datos principales (sin ID)
+                this.form.patchValue({
+                    subtotal: data.subtotal,
+                    iva: data.iva,
+                    total: data.total
+                });
+              
+                // Agrega los productos al FormArray
+                response.data.datos.forEach((producto: any) => {
+                    const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
+                    const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
+                    
+                    const productoForm = this.formBuilder.group({
+                        producto: [producto.id_producto, Validators.required],
+                        cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
+                        subtotalItem: [subtotalItem]
+                    });
+                    
+                    // Configura los listeners para cambios
+                    this.configurarListenersDeProducto(productoForm);
+                    
+                    this.productos.push(productoForm);
+                });
+                
+                // Recalcula los totales
+                this.actualizarTotales();
+            });
+        }, 8);
+    } else {
+        this.resetearFormulario();
     }
+}
 
     // Método para resetear el formulario
     private resetearFormulario() {

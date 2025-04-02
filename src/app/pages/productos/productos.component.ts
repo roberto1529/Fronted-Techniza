@@ -16,16 +16,17 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { CustomValidators } from '../../shared/validator/validators';
 import { EncryptionService } from '../../shared/encryption.interceptor';
-import { DatosTableDto, MarcasproductoDto } from './types/dto.interface';
+import { DatosTableDto, MarcasproductoDto, MarcasproductoListDto } from './types/dto.interface';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Endpoint } from './services/productos.service';
 import { TextareaModule } from 'primeng/textarea';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-productos',
   imports: [TableModule, ButtonModule, TagModule, IconFieldModule, InputTextModule, InputIconModule,
     MultiSelectModule, SelectModule, CommonModule, ReactiveFormsModule, TagModule, ToggleSwitchModule,
-    TooltipModule, DialogModule, ToastModule, InputNumberModule,TextareaModule],
+    TooltipModule, DialogModule, ToastModule, InputNumberModule,TextareaModule,TabsModule],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.scss',
   providers: [MessageService]
@@ -35,7 +36,9 @@ export class ProductosComponent implements OnInit {
   empleadoInfo: any = localStorage.getItem('token'); 
   loading: boolean = true;
   visible: boolean = false;
-  @ViewChild('dt2') dt2!: Table; // Definir la referencia correctamente
+  visibleMarcas: boolean = false;
+  @ViewChild('dt2') dt2!: Table;
+  @ViewChild('dt1') dt1!: Table;
   private formBuilder = inject(FormBuilder);
   TituloForm: string = "";
   errorMessages: Record<string, string> = {
@@ -51,7 +54,7 @@ export class ProductosComponent implements OnInit {
   };
   productos!: DatosTableDto[];
   marcas!: MarcasproductoDto[];
-  
+  marcaslist!: MarcasproductoListDto[];
   constructor(private serve: Endpoint, private messageService: MessageService, private crypto: EncryptionService) { }
 
   // Declaracion de formulario reactivo
@@ -85,6 +88,18 @@ export class ProductosComponent implements OnInit {
     venta: [0, [
       Validators.required,
     ]],
+    estado: [false],
+
+  });
+
+  formmarcas = this.formBuilder.group({
+    id: [0],
+    buscar: [''],
+    marca: ['', [
+      Validators.required,
+      CustomValidators.noWhitespaceValidator,
+      CustomValidators.firstLetterUppercase
+    ]],
     estado: [false]
   });
 
@@ -99,6 +114,7 @@ export class ProductosComponent implements OnInit {
       let response = this.crypto.decryptData(res);
       this.productos = response.data.productos;      
       this.marcas = response.data.marcas;
+      this.marcaslist = response.data.marcaslist;
       this.loading = false;
     });
 
@@ -108,11 +124,17 @@ export class ProductosComponent implements OnInit {
   clear(table: Table) {
     table.clear();
     this.form.reset();
+    this.formmarcas.reset();
   }
 
   searchGlobal(event: Event) {
     const input = event.target as HTMLInputElement;
     this.dt2.filterGlobal(input.value, 'contains');
+  }
+
+  searchGlobal2(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.dt1.filterGlobal(input.value, 'contains');
   }
 
   getSeverity(status: boolean) {
@@ -175,6 +197,22 @@ export class ProductosComponent implements OnInit {
 
   }
 
+  formModalmarcas(titulo: string, data?: any): void {    
+    this.TituloForm = titulo;    
+    this.visibleMarcas = !this.visible;
+    if (titulo === 'Editar') {
+      setTimeout(() => {
+          this.formmarcas.patchValue({
+            id: data?.id,
+            marca: data?.marca
+          });
+      }, 0);
+    } else {
+      this.formmarcas.reset();
+    }
+
+  }
+
   public onCrear(): void {
 
     this.serve.SetData(this.form.value).subscribe((res) => {
@@ -190,9 +228,23 @@ export class ProductosComponent implements OnInit {
     });
   }
 
-  public onEditar(): void {
-    console.log(this.form.value);
+  public onCrearMarca(): void {
 
+    this.serve.SetDataMarca(this.formmarcas.value).subscribe((res) => {
+      let response = this.crypto.decryptData(res);
+      if (response.Status === 200) {
+        this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
+        this.visible = false;
+        this.visibleMarcas = false;
+        this.formmarcas.reset();
+        this.getData();
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
+      }
+    });
+  }
+
+  public onEditar(): void {
     this.serve.PutUser(this.form.value).subscribe((res) => {
       let response = this.crypto.decryptData(res);
       if (response.Status === 200) {
@@ -205,6 +257,22 @@ export class ProductosComponent implements OnInit {
       }
     });
   }
+
+  public onEditarMarca(): void {
+    this.serve.PutDataMarca(this.formmarcas.value).subscribe((res) => {
+      let response = this.crypto.decryptData(res);
+      if (response.Status === 200) {
+        this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
+        this.visible = false;
+        this.visibleMarcas=false;
+        this.formmarcas.reset();
+        this.getData();
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
+      }
+    });
+  }
+
   public mensajeError(campo: string, error: string): boolean {
     const control = this.form.get(`${campo}`);
     return (
@@ -221,6 +289,15 @@ export class ProductosComponent implements OnInit {
       .map(error => this.errorMessages[error]);
   }
 
+  getFieldErrors2(fieldName: string): string[] {
+    const control = this.formmarcas.get(fieldName);
+    if (!control || !control.errors || (!control.touched && !control.dirty)) return [];
+
+    return Object.keys(control.errors)
+      .filter(error => this.errorMessages[error])
+      .map(error => this.errorMessages[error]);
+  }
+
   getEstadoControl(datos: any): FormControl {
     return new FormControl(datos.estado);
   }
@@ -228,6 +305,22 @@ export class ProductosComponent implements OnInit {
   onEstadoChange(datos: any) {
     datos.estado = !datos.estado;
     this.serve.SetEstado(datos).subscribe((res: any) => {
+      let response = this.crypto.decryptData(res);
+      if (response.status === 200) {
+        this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
+        this.visible = false;
+        this.form.reset();
+        this.getData();
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
+      }
+    });
+  }
+
+
+  onEstadoMarChange(datos: any) {
+    datos.estado = !datos.estado;
+    this.serve.PutDataMarcaEstado(datos).subscribe((res: any) => {
       let response = this.crypto.decryptData(res);
       if (response.status === 200) {
         this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });

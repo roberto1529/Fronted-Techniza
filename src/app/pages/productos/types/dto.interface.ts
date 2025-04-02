@@ -16,3 +16,11 @@ export interface MarcasproductoDto {
 	id: number;
 	marca: string;
 }
+
+
+
+export interface MarcasproductoListDto {
+	id: number;
+	marca: string;
+	estado: boolean;
+}

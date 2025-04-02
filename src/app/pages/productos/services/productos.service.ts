@@ -36,4 +36,21 @@ export class Endpoint {
     return this.http.put(this.endpoint+'/ActualizarDatos', send);
   }
 
+  public SetDataMarca(dato: any){
+    let datos = this.crypto.encryptData(dato);
+    const send = {data: datos}
+    return this.http.post(this.endpoint+'/CrearMarca', send);
+  }
+
+  public PutDataMarca(dato: any){
+    let datos = this.crypto.encryptData(dato);
+    const send = {data: datos}
+    return this.http.put(this.endpoint+'/EditarMarca', send);
+  }
+
+  public PutDataMarcaEstado(dato: any){
+    let datos = this.crypto.encryptData(dato);
+    const send = {data: datos}
+    return this.http.put(this.endpoint+'/EditarMarcaEstado', send);
+  }
 }

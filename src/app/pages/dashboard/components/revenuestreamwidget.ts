@@ -14,9 +14,7 @@ import { LayoutService } from '../../../layout/service/layout.service';
 })
 export class RevenueStreamWidget {
     chartData: any;
-
     chartOptions: any;
-
     subscription!: Subscription;
 
     constructor(public layoutService: LayoutService) {
@@ -35,36 +33,31 @@ export class RevenueStreamWidget {
         const borderColor = documentStyle.getPropertyValue('--surface-border');
         const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
 
+        const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'];
+        const dataValues = labels.map(() => Math.floor(Math.random() * 10000) + 1000);
+        const growthValues = dataValues.map((value, index) => {
+            return index === 0 ? value : dataValues[index - 1] * 1.1;
+        });
+
         this.chartData = {
-            labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+            labels: labels,
             datasets: [
                 {
                     type: 'bar',
-                    label: 'Subscriptions',
+                    label: 'Ventas',
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
-                    data: [4000, 10000, 15000, 4000],
+                    data: dataValues,
                     barThickness: 32
                 },
                 {
-                    type: 'bar',
-                    label: 'Advertising',
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
-                    data: [2100, 8400, 2400, 7500],
-                    barThickness: 32
-                },
-                {
-                    type: 'bar',
-                    label: 'Affiliate',
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-200'),
-                    data: [4100, 5200, 3400, 7400],
-                    borderRadius: {
-                        topLeft: 8,
-                        topRight: 8,
-                        bottomLeft: 0,
-                        bottomRight: 0
-                    },
-                    borderSkipped: false,
-                    barThickness: 32
+                    type: 'line',
+                    label: 'Crecimiento',
+                    borderColor: documentStyle.getPropertyValue('--p-primary-300'),
+                    backgroundColor: 'transparent',
+                    data: growthValues,
+                    tension: 0.4,
+                    fill: false,
+                    borderWidth: 2
                 }
             ]
         };
@@ -81,7 +74,7 @@ export class RevenueStreamWidget {
             },
             scales: {
                 x: {
-                    stacked: true,
+                    stacked: false,
                     ticks: {
                         color: textMutedColor
                     },
@@ -91,7 +84,7 @@ export class RevenueStreamWidget {
                     }
                 },
                 y: {
-                    stacked: true,
+                    stacked: false,
                     ticks: {
                         color: textMutedColor
                     },

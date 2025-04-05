@@ -21,22 +21,39 @@
                       'venta',
                       'estado',
                       'fecha_reg']" [tableStyle]="{ 'min-width': '100rem', 'max-width': '150rem', 'width': '100%' }">
-            <ng-template #header>
-        
-              <tr>
-                <th style="min-width: 2rem; max-width: 5rem;">#</th>
-                <th style="min-width: 12rem; max-width: 15rem;">Marca</th>
-                <th style="min-width: 15rem; max-width: 18rem;">Modelo</th>
-                <th style="min-width: 15rem; max-width: 18rem;">Descripción</th>
-                <th style="min-width: 10rem; max-width: 15rem;">Costo</th>
-                <th style="min-width: 10rem; max-width: 15rem;">Ganancia</th>
-                <th style="min-width: 8rem; max-width: 10rem;">Utilidad</th>
-                <th style="min-width: 12rem; max-width: 16rem;">Precio de Venta</th>
-                <th style="min-width: 7rem; max-width: 8rem;">Estado</th>
-                <th style="min-width: 15rem; max-width: 18rem;">Fecha de Registro</th>
-                <th style="min-width: 12rem; max-width: 15rem;">Acciones</th>
-              </tr>
-            </ng-template>
+          <ng-template #header>
+            <tr>
+              <th style="min-width: 2rem; max-width: 5rem;">#</th>
+              <th pSortableColumn="marca" style="min-width: 12rem; max-width: 15rem;">Marca
+                <p-sortIcon field="marca"></p-sortIcon>
+              </th>
+              <th pSortableColumn="modelo" style="min-width: 15rem; max-width: 18rem;">Modelo
+                <p-sortIcon field="modelo"></p-sortIcon>
+              </th>
+              <th pSortableColumn="descripcion" style="min-width: 15rem; max-width: 18rem;">Descripción
+                <p-sortIcon field="descripcion"></p-sortIcon>
+              </th>
+              <th pSortableColumn="costo" style="min-width: 10rem; max-width: 15rem;">Costo
+                <p-sortIcon field="costo"></p-sortIcon>
+              </th>
+              <th pSortableColumn="ganancia" style="min-width: 10rem; max-width: 15rem;">Ganancia
+                <p-sortIcon field="ganancia"></p-sortIcon>
+              </th>
+              <th pSortableColumn="utilidad" style="min-width: 8rem; max-width: 10rem;">Utilidad
+                <p-sortIcon field="utilidad"></p-sortIcon>
+              </th>
+              <th pSortableColumn="venta" style="min-width: 12rem; max-width: 16rem;">Precio de Venta
+                <p-sortIcon field="venta"></p-sortIcon>
+              </th>
+              <th pSortableColumn="estado" style="min-width: 7rem; max-width: 8rem;">Estado
+                <p-sortIcon field="estado"></p-sortIcon>
+              </th>
+              <th pSortableColumn="fecha_reg" style="min-width: 15rem; max-width: 18rem;">Fecha de Registro
+                <p-sortIcon field="fecha_reg"></p-sortIcon>
+              </th>
+              <th style="min-width: 12rem; max-width: 15rem;">Acciones</th>
+            </tr>
+          </ng-template>
             <ng-template #caption>
               <div class="flex gap-2">
                 <p-button label="Crear" [outlined]="true" icon="pi pi-box" (click)="formModal('Crear producto')" />

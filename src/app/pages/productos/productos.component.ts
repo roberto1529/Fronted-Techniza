@@ -33,7 +33,7 @@ import { TabsModule } from 'primeng/tabs';
 })
 export class ProductosComponent implements OnInit {
 
-  empleadoInfo: any = localStorage.getItem('token'); 
+  empleadoInfo: any = localStorage.getItem('token');
   loading: boolean = true;
   visible: boolean = false;
   visibleMarcas: boolean = false;
@@ -112,7 +112,7 @@ export class ProductosComponent implements OnInit {
   private getData() {
     this.serve.getAll().subscribe((res: any) => {
       let response = this.crypto.decryptData(res);
-      this.productos = response.data.productos;      
+      this.productos = response.data.productos;
       this.marcas = response.data.marcas;
       this.marcaslist = response.data.marcaslist;
       this.loading = false;
@@ -175,8 +175,8 @@ export class ProductosComponent implements OnInit {
 
   formModal(titulo: string, data?: DatosTableDto): void {
     console.log('data set', data);
-    
-    this.TituloForm = titulo;    
+
+    this.TituloForm = titulo;
     this.visible = !this.visible;
     if (titulo === 'Editar producto') {
       setTimeout(() => {
@@ -197,8 +197,8 @@ export class ProductosComponent implements OnInit {
 
   }
 
-  formModalmarcas(titulo: string, data?: any): void {    
-    this.TituloForm = titulo;    
+  formModalmarcas(titulo: string, data?: any): void {
+    this.TituloForm = titulo;
     this.visibleMarcas = !this.visible;
     if (titulo === 'Editar') {
       setTimeout(() => {
@@ -207,9 +207,13 @@ export class ProductosComponent implements OnInit {
             marca: data?.marca
           });
       }, 0);
+    } if (titulo === 'Eliminar') {
+
     } else {
       this.formmarcas.reset();
     }
+
+
 
   }
 
@@ -334,13 +338,13 @@ export class ProductosComponent implements OnInit {
   }
 
   public calcularValores(){
-      const { costo, ganancia }: any = this.form.value;      
+      const { costo, ganancia }: any = this.form.value;
 
       if (typeof costo === 'number' && costo >= 0 && typeof ganancia === 'number' && ganancia >= 0) {
         const porcentaje = ganancia / 100;
         const utilidad = Number((costo * porcentaje).toFixed(2));
         const venta = costo + utilidad;
-      
+
         this.form.patchValue({ utilidad, venta });
       } else {
         this.form.patchValue({
@@ -350,9 +354,9 @@ export class ProductosComponent implements OnInit {
           venta: null
         });
       }
-      
-      
+
+
 
   }
-  
+
 }

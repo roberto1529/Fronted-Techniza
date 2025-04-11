@@ -63,10 +63,10 @@
                     <p-inputicon>
                       <i class="pi pi-search"></i>
                     </p-inputicon>
-        
+
                     <input pInputText type="text" formControlName="buscar" (input)="searchGlobal($event)" placeholder="Buscar">
                   </form>
-        
+
                 </p-iconfield>
               </div>
             </ng-template>
@@ -84,7 +84,7 @@
                 </td>
                 <td>{{ producto.fecha_reg | date:"dd/MM/yyyy h:mm a"}}</td>
                 <td>
-        
+
                   <form [formGroup]="form" style="    display: flex;
                                   flex-direction: row;
                                   align-content: center;
@@ -94,12 +94,12 @@
                       (click)="formModal('Editar producto', producto)" />
                     <p-toggleswitch pTooltip="{{ producto.estado ? 'Activo' : 'Inactivo' }}" tooltipPosition="bottom"
                       [formControl]="getEstadoControl(producto)" (change)="onEstadoChange(producto)" />
-        
+
                   </form>
-        
+
                 </td>
-        
-        
+
+
               </tr>
             </ng-template>
           </p-table>
@@ -116,11 +116,11 @@
                       'estado',
                       'fecha_reg']" [tableStyle]="{ 'min-width': '100rem', 'max-width': '150rem', 'width': '100%' }">
             <ng-template #header>
-        
+
               <tr>
                 <th style="min-width: 2rem; max-width: 5rem;">#</th>
                 <th style="min-width: 8rem; max-width: 10rem;">Marca</th>
-                <th style="min-width: 5rem; max-width: 8rem;">Estado</th> 
+                <th style="min-width: 5rem; max-width: 8rem;">Estado</th>
                 <th style="min-width: 5rem; max-width: 8rem;">Acciones</th>
               </tr>
             </ng-template>
@@ -133,10 +133,10 @@
                     <p-inputicon>
                       <i class="pi pi-search"></i>
                     </p-inputicon>
-        
+
                     <input pInputText type="text" formControlName="buscar" (input)="searchGlobal2($event)" placeholder="Buscar">
                   </form>
-        
+
                 </p-iconfield>
               </div>
             </ng-template>
@@ -147,7 +147,7 @@
                 <td><p-tag [value]="getStatusNombre(producto.estado)" [severity]="getSeverity(producto.estado)" />
                 </td>
                 <td>
-        
+
                   <form [formGroup]="formmarcas" style="    display: flex;
                                   flex-direction: row;
                                   align-content: center;
@@ -157,12 +157,12 @@
                       (click)="formModalmarcas('Editar', producto)" />
                     <p-toggleswitch pTooltip="{{ producto.estado ? 'Activo' : 'Inactivo' }}" tooltipPosition="bottom"
                       [formControl]="getEstadoControl(producto)" (change)="onEstadoMarChange(producto)" />
-        
+
                   </form>
-        
+
                 </td>
-        
-        
+
+
               </tr>
             </ng-template>
           </p-table>
@@ -180,7 +180,7 @@
 
       <div class="flex flex-col gap-2">
         <label for="marca">Marca</label>
-        <p-select formControlName="marca" [options]="marcas" optionValue="id" optionLabel="marca"
+        <p-select formControlName="marca" [filter]="true" [options]="marcas" optionValue="id" optionLabel="marca"
           placeholder="Seleccione"></p-select>
         @for (error of getFieldErrors('marca'); track error) {
         <small class="text-red-500">{{ error }}</small>

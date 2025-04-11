@@ -14,8 +14,8 @@ export class EndpointDash {
       return this.http.get<any>(this.endpoint+'/Analytics');
   }
 
-  public getAllUsarios(){
-    return this.http.get<any>(this.endpoint+'/usuarios');
+  public getGrafic(){
+    return this.http.get<any>(this.endpoint+'/Grafics');
   }
 
 

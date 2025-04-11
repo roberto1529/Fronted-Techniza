@@ -2,13 +2,15 @@ import { Component } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
 import { LayoutService } from '../../../layout/service/layout.service';
+import { EncryptionService } from '../../../shared/encryption.interceptor';
+import { EndpointDash } from '../services/dashboard.service';
 
 @Component({
     standalone: true,
     selector: 'app-revenue-stream-widget',
     imports: [ChartModule],
     template: `<div class="card !mb-8">
-        <div class="font-semibold text-xl mb-4">Revenue Stream</div>
+        <div class="font-semibold text-xl mb-4">Ventas Recientes</div>
         <p-chart type="bar" [data]="chartData" [options]="chartOptions" class="h-80" />
     </div>`
 })
@@ -17,10 +19,10 @@ export class RevenueStreamWidget {
     chartOptions: any;
     subscription!: Subscription;
 
-    constructor(public layoutService: LayoutService) {
-        this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
-            this.initChart();
-        });
+    constructor(public layoutService: LayoutService, private service: EndpointDash,
+        private crypto: EncryptionService) {
+        this.initChart();
+
     }
 
     ngOnInit() {
@@ -33,69 +35,59 @@ export class RevenueStreamWidget {
         const borderColor = documentStyle.getPropertyValue('--surface-border');
         const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
 
-        const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'];
-        const dataValues = labels.map(() => Math.floor(Math.random() * 10000) + 1000);
-        const growthValues = dataValues.map((value, index) => {
-            return index === 0 ? value : dataValues[index - 1] * 1.1;
-        });
+        this.service.getGrafic().subscribe(res =>{
+            let data: any = this.crypto.decryptData(res);
+            console.log('Grafics',data.data.datos);
 
-        this.chartData = {
-            labels: labels,
-            datasets: [
-                {
-                    type: 'bar',
-                    label: 'Ventas',
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
-                    data: dataValues,
-                    barThickness: 32
-                },
-                {
-                    type: 'line',
-                    label: 'Crecimiento',
-                    borderColor: documentStyle.getPropertyValue('--p-primary-300'),
-                    backgroundColor: 'transparent',
-                    data: growthValues,
-                    tension: 0.4,
-                    fill: false,
-                    borderWidth: 2
-                }
-            ]
-        };
+                const labels = data.data.datos.map((d:any) => d.cliente);
+                const values = data.data.datos.map((d:any)  => d.total_cotizaciones);
 
-        this.chartOptions = {
-            maintainAspectRatio: false,
-            aspectRatio: 0.8,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: textColor
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    stacked: false,
-                    ticks: {
-                        color: textMutedColor
+                this.chartData = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'Cotizaciones',
+                            backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
+                            data: values,
+                            barThickness: 32
+                        }
+                    ]
+                };
+
+                this.chartOptions = {
+                    maintainAspectRatio: false,
+                    aspectRatio: 0.8,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: textColor
+                            }
+                        }
                     },
-                    grid: {
-                        color: 'transparent',
-                        borderColor: 'transparent'
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: textMutedColor
+                            },
+                            grid: {
+                                color: 'transparent'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: textMutedColor
+                            },
+                            grid: {
+                                color: borderColor
+                            }
+                        }
                     }
-                },
-                y: {
-                    stacked: false,
-                    ticks: {
-                        color: textMutedColor
-                    },
-                    grid: {
-                        color: borderColor,
-                        borderColor: 'transparent',
-                        drawTicks: false
-                    }
-                }
-            }
-        };
+                };
+
+     });
+
+
     }
 
     ngOnDestroy() {

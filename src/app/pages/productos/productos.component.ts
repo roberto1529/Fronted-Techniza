@@ -322,6 +322,21 @@ export class ProductosComponent implements OnInit {
   }
 
 
+  EliminadoChange(datos: any) {
+    datos.estado = datos.estado;
+    this.serve.SetEliminado(datos).subscribe((res: any) => {
+      let response = this.crypto.decryptData(res);
+      if (response.status === 200) {
+        this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
+        this.visible = false;
+        this.form.reset();
+        this.getData();
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
+      }
+    });
+  }
+
   onEstadoMarChange(datos: any) {
     datos.estado = !datos.estado;
     this.serve.PutDataMarcaEstado(datos).subscribe((res: any) => {

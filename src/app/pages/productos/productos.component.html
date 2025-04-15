@@ -94,7 +94,8 @@
                       (click)="formModal('Editar producto', producto)" />
                     <p-toggleswitch pTooltip="{{ producto.estado ? 'Activo' : 'Inactivo' }}" tooltipPosition="bottom"
                       [formControl]="getEstadoControl(producto)" (change)="onEstadoChange(producto)" />
-
+                      <p-button icon="pi pi-trash" severity="danger" pTooltip="Eliminar" tooltipPosition="bottom"
+                      (click)="EliminadoChange(producto)" />
                   </form>
 
                 </td>

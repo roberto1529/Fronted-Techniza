@@ -13,7 +13,7 @@ export class Endpoint {
   public getAll(){
       return this.http.get<any>(this.endpoint);
   }
-  
+
   public getAllUsarios(){
     return this.http.get<any>(this.endpoint+'/usuarios');
   }
@@ -28,6 +28,12 @@ export class Endpoint {
     let datos = this.crypto.encryptData(dato);
     const send = {data: datos}
     return this.http.put(this.endpoint+'/UpdateEstado', send);
+  }
+
+  public SetEliminado(dato: any){
+    let datos = this.crypto.encryptData(dato);
+    const send = {data: datos}
+    return this.http.put(this.endpoint+'/DeleteEstado', send);
   }
 
   public PutUser(dato: any){

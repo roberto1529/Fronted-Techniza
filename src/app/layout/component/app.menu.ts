@@ -22,17 +22,17 @@ export class AppMenu {
     model: MenuItem[] = [];
     constructor(private crypto: EncryptionService){
         const  jsonData = this.crypto.decryptData(this.local);
-        this.Data  = jsonData.data.data.datos[0];    
-        
+        this.Data  = jsonData.data.data.datos[0];
+
         if (this.Data.tipo === 1) {
             this.menuAdmin()
         }
     }
-    
-    
+
+
     protected menuAdmin(): void{
         this.model = [
-            
+
             {
                 label: 'Inicio',
                 items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
@@ -59,7 +59,7 @@ export class AppMenu {
                         ]
                     },
                     {
-                        label: 'Facturas',
+                        label: 'Cotizaciones',
                         icon: 'pi pi-file-pdf',
                         routerLink: ['/dash/modulo/facturas']
                     },
@@ -67,6 +67,11 @@ export class AppMenu {
                         label: 'Productos',
                         icon: 'pi pi-box',
                         routerLink: ['/dash/modulo/productos']
+                    },
+                    {
+                        label: 'Plantillas',
+                        icon: 'pi pi-objects-column',
+                        routerLink: ['/dash/modulo/machotes']
                     },
                 ]
             }

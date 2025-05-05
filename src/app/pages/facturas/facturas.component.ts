@@ -23,6 +23,7 @@ import { PopoverModule } from 'primeng/popover';
 import { BadgeModule } from 'primeng/badge';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-facturas',
@@ -80,8 +81,9 @@ export class FacturasComponent {
     constructor(
         private serve: FacturasService,
         private messageService: MessageService,
-        private crypto: EncryptionService
-    ) {}
+        private crypto: EncryptionService,
+        private route: ActivatedRoute
+    ) { }
 
     // Declaracion de formulario reactivo
     form = this.formBuilder.group({
@@ -93,13 +95,25 @@ export class FacturasComponent {
         iva: [0],
         total: [0],
         idempleado: [''],
+        nota: [''],
         estado: [false]
     });
 
     ngOnInit(): void {
+
         this.getData();
         this.empleadoInfo = this.crypto.decryptData(this.empleadoInfo);
         this.empleadoInfo = this.empleadoInfo?.data.data.datos[0];
+
+        const id = this.route.snapshot.paramMap.get('id');
+        console.log('id', id);
+
+        if (id !== null ) {
+
+            this.TituloForm = 'Cotizar plantilla';
+            this.formModal(this.TituloForm, null,id)
+        }
+
     }
 
     private getData() {
@@ -162,102 +176,139 @@ export class FacturasComponent {
 
     getProductosDisponibles(index: number): DetalleFact[] {
         const productosSeleccionados = this.productos.controls.map((control) => control.get('producto')?.value);
-        return this.productos_list.filter((producto) => 
-            !productosSeleccionados.includes(producto.id) || 
+        return this.productos_list.filter((producto) =>
+            !productosSeleccionados.includes(producto.id) ||
             producto.id === this.productos.at(index).get('producto')?.value
         );
     }
 
     // Método para mostrar el modal de formulario
-  // Método para mostrar el modal de formulario
-formModal(titulo: string, data?: any): void {
-    this.TituloForm = titulo;
-    this.visible = !this.visible;
-    
-    if (titulo === 'Editar factura') {
-        console.log('Datos de entrada', data);
-        
-        setTimeout(() => {
-            const send = { id: data.id };
-            this.serve.GetdataProd(send).subscribe((res: any) => {
-                let response = this.crypto.decryptData(res);
-                
-                // Limpia el FormArray existente
-                this.productos.clear();
-                
-                // Actualiza los datos principales
-                this.form.patchValue({
-                    id: data?.id,
-                    cliente: data.id_cliente,
-                    subtotal: data.subtotal,
-                    iva: data.iva,
-                    total: data.total
-                });
-              
-                // Agrega los productos al FormArray
-                response.data.datos.forEach((producto: any) => {
-                    const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
-                    const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
-                    
-                    const productoForm = this.formBuilder.group({
-                        producto: [producto.id_producto, Validators.required],
-                        cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
-                        subtotalItem: [subtotalItem]
+    // Método para mostrar el modal de formulario
+    formModal(titulo: string, data?: any, id?:any): void {
+        this.TituloForm = titulo;
+        this.visible = !this.visible;
+
+        if (titulo === 'Editar factura') {
+
+            setTimeout(() => {
+                const send = { id: data.id };
+                this.serve.GetdataProd(send).subscribe((res: any) => {
+                    let response = this.crypto.decryptData(res);
+
+                    // Limpia el FormArray existente
+                    this.productos.clear();
+
+                    // Actualiza los datos principales
+                    this.form.patchValue({
+                        id: data?.id,
+                        cliente: data.id_cliente,
+                        subtotal: data.subtotal,
+                        iva: data.iva,
+                        total: data.total
                     });
-                    
-                    // Configura los listeners para cambios
-                    this.configurarListenersDeProducto(productoForm);
-                    
-                    this.productos.push(productoForm);
-                });
-                
-                // Recalcula los totales
-                this.actualizarTotales();
-            });
-        }, 8);
-    } else if (titulo === 'Duplicar factura') {
-        console.log('Duplicando factura', data);
-        
-        setTimeout(() => {
-            const send = { id: data.id };
-            this.serve.GetdataProd(send).subscribe((res: any) => {
-                let response = this.crypto.decryptData(res);
-                
-                // Limpia el FormArray existente
-                this.productos.clear();
-                
-                // Actualiza los datos principales (sin ID)
-                this.form.patchValue({
-                    subtotal: data.subtotal,
-                    iva: data.iva,
-                    total: data.total
-                });
-              
-                // Agrega los productos al FormArray
-                response.data.datos.forEach((producto: any) => {
-                    const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
-                    const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
-                    
-                    const productoForm = this.formBuilder.group({
-                        producto: [producto.id_producto, Validators.required],
-                        cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
-                        subtotalItem: [subtotalItem]
+
+                    // Agrega los productos al FormArray
+                    response.data.datos.forEach((producto: any) => {
+                        const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
+                        const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
+
+                        const productoForm = this.formBuilder.group({
+                            producto: [producto.id_producto, Validators.required],
+                            cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
+                            subtotalItem: [subtotalItem]
+                        });
+
+                        // Configura los listeners para cambios
+                        this.configurarListenersDeProducto(productoForm);
+
+                        this.productos.push(productoForm);
                     });
-                    
-                    // Configura los listeners para cambios
-                    this.configurarListenersDeProducto(productoForm);
-                    
-                    this.productos.push(productoForm);
+
+                    // Recalcula los totales
+                    this.actualizarTotales();
                 });
-                
-                // Recalcula los totales
-                this.actualizarTotales();
-            });
-        }, 8);
-    } else {
-        this.resetearFormulario();
+            }, 8);
+        } else if (titulo === 'Duplicar factura') {
+            console.log('Duplicando factura', data);
+
+            setTimeout(() => {
+                const send = { id: data.id };
+                this.serve.GetdataProd(send).subscribe((res: any) => {
+                    let response = this.crypto.decryptData(res);
+
+                    // Limpia el FormArray existente
+                    this.productos.clear();
+
+                    // Actualiza los datos principales (sin ID)
+                    this.form.patchValue({
+                        subtotal: data.subtotal,
+                        iva: data.iva,
+                        total: data.total
+                    });
+
+                    // Agrega los productos al FormArray
+                    response.data.datos.forEach((producto: any) => {
+                        const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
+                        const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
+
+                        const productoForm = this.formBuilder.group({
+                            producto: [producto.id_producto, Validators.required],
+                            cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
+                            subtotalItem: [subtotalItem]
+                        });
+
+                        // Configura los listeners para cambios
+                        this.configurarListenersDeProducto(productoForm);
+
+                        this.productos.push(productoForm);
+                    });
+
+                    // Recalcula los totales
+                    this.actualizarTotales();
+                });
+            }, 8);
+        }else if (titulo === 'Cotizar plantilla') {
+
+            setTimeout(() => {
+                const send = { id: id };
+                this.serve.GetdataPlantilla(send).subscribe((res: any) => {
+                    let response = this.crypto.decryptData(res);
+                    console.log('llega', response);
+                    let dao = response.data;
+                    // Limpia el FormArray existente
+                    this.productos.clear();
+
+                    // Actualiza los datos principales (sin ID)
+                    this.form.patchValue({
+                        cliente: dao.datos[0].id_cliente,
+                    });
+
+                    // Agrega los productos al FormArray
+                    dao.productos.forEach((producto: any) => {
+                        const productoEncontrado = this.productos_list.find(p => p.id === producto.id_producto);
+                        const subtotalItem = producto.cantidad * (productoEncontrado?.precio || 0);
+
+                        const productoForm = this.formBuilder.group({
+                            producto: [producto.id_producto, Validators.required],
+                            cantidad: [producto.cantidad, [Validators.required, Validators.min(1)]],
+                            subtotalItem: [subtotalItem]
+                        });
+
+                        // Configura los listeners para cambios
+                        this.configurarListenersDeProducto(productoForm);
+
+                        this.productos.push(productoForm);
+                    });
+
+                    // Recalcula los totales
+                    this.actualizarTotales();
+                });
+            }, 25);
+        }
+        else {
+            this.resetearFormulario();
+        }
     }
-}
 
     // Método para resetear el formulario
     private resetearFormulario() {
@@ -273,7 +324,7 @@ formModal(titulo: string, data?: any): void {
                 this.actualizarProducto(index);
             }
         });
-        
+
         productoForm.get('producto')?.valueChanges.subscribe(() => {
             const index = this.productos.controls.indexOf(productoForm);
             if (index !== -1) {
@@ -291,13 +342,13 @@ formModal(titulo: string, data?: any): void {
 
             // Buscar el producto en la lista
             const productoEncontrado = this.productos_list.find(x => x.id === productoId);
-            
+
             if (productoEncontrado) {
                 const subTotal = cantidad * Number(productoEncontrado.precio);
-                
+
                 // Actualizar solo el subtotalItem sin disparar eventos
                 productoForm.get('subtotalItem')?.setValue(subTotal, { emitEvent: false });
-                
+
                 // Recalcular totales
                 this.actualizarTotales();
             }
@@ -309,7 +360,7 @@ formModal(titulo: string, data?: any): void {
         const subtotal = this.subtotal;
         const iva = this.iva;
         const total = this.total;
-        
+
         this.form.patchValue({
             subtotal: subtotal,
             iva: iva,
@@ -327,7 +378,7 @@ formModal(titulo: string, data?: any): void {
 
         // Configura los listeners para cambios
         this.configurarListenersDeProducto(productoForm);
-        
+
         this.productos.push(productoForm);
     }
 
@@ -388,8 +439,7 @@ formModal(titulo: string, data?: any): void {
     }
 
     public onEditar(): void {
-        console.log('Formulario', this.form.value);
-        this.serve.PutData(this.form.value).subscribe((res: any)=>{
+        this.serve.PutData(this.form.value).subscribe((res: any) => {
             let response = this.crypto.decryptData(res);
             if (response.Status === 200) {
                 this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data.msj });
@@ -420,7 +470,17 @@ formModal(titulo: string, data?: any): void {
 
     onEstadoChange(datos: any) {
         datos.estado = !datos.estado;
-        // Implementación de cambio de estado aquí
+        this.serve.SetEstado(datos).subscribe((res: any) => {
+            let response = this.crypto.decryptData(res);
+            if (response.status === 200) {
+                this.messageService.add({ severity: 'success', summary: 'Correcto', detail: response.data });
+                this.visible = false;
+                this.form.reset();
+                this.getData();
+            } else {
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor verificar la información diligenciada.' });
+            }
+        });
     }
 
     public async DetalleFactura(id: number) {

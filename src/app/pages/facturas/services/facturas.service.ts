@@ -54,17 +54,47 @@ export class FacturasService {
   }
 
 
-  // public GetDoctoFact(id: number){
+//   servicios de apis rest plantillas
 
+  public getRowmachotes() {
+    return this.http.get<any>(this.endpoint+ '/allmachote');
+  }
 
+  public GetProdPlantilla(dato: any) {
+    let datos = this.crypto.encryptData(dato);
+    const send = { data: datos }
+    return this.http.post(this.endpoint + '/cantidadplantilla', send);
+  }
 
-  //   return this.http.get(`${this.endpointrp}generate-fact/${id}`)
-  //   .pipe(
-  //     catchError((error: HttpErrorResponse) => {
-  //       console.error('Error en la API:', error);
-  //       return throwError(() => new Error('Error al generar factura'));
-  //     })
-  //   );
-  // }
+  public GetdataPlantilla(dato: any) {
+    let datos = this.crypto.encryptData(dato);
+    const send = { data: datos }
+    return this.http.post(this.endpoint + '/CargaDatosPlantilla', send);
+  }
+
+  public SetdataPlantilla(dato: any) {
+    let datos = this.crypto.encryptData(dato);
+    const send = { data: datos }
+    return this.http.post(this.endpoint + '/CrearPlantilla', send);
+  }
+
+  public PutDataPlantilla(dato: any) {
+    let datos = this.crypto.encryptData(dato);
+    const send = { data: datos }
+    return this.http.put(this.endpoint + '/EditarPlantilla', send);
+  }
+
+  public SetEstadoPlantilla(dato: any) {
+    let datos = this.crypto.encryptData(dato);
+    const send = { data: datos }
+    return this.http.put(this.endpoint + '/UpdateEstadoPlantilla', send);
+  }
+
+  public GetdataPlantillaFacturador(dato: any) {
+    let datos = this.crypto.encryptData(dato);
+    const send = { data: datos }
+    return this.http.post(this.endpoint + '/CargaDatosPlantilla', send);
+  }
+
 }
 

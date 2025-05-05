@@ -27,19 +27,19 @@
             <ng-template #header>
               <tr>
                   <th style="min-width: 2rem; max-width: 5rem;">
-                    #                    
+                    #
                   </th>
                   <th style="min-width: 12rem; max-width: 15rem;" [pSortableColumn]="'code_fact'">Cod. Fact
                       <p-sortIcon [field]="'code_fact'"></p-sortIcon>
-                      
+
                   </th>
                   <th style="min-width: 12rem; max-width: 15rem;" [pSortableColumn]="'cliente'">Cliente
                       <p-sortIcon [field]="'cliente'"></p-sortIcon>
-                     
+
                   </th>
                   <th style="min-width: 10rem; max-width: 12rem;" [pSortableColumn]="'telefono'">Teléfono
                       <p-sortIcon [field]="'telefono'"></p-sortIcon>
-                      
+
                   </th>
                   <th style="min-width: 15rem; max-width: 18rem;" [pSortableColumn]="'correo'">Correo
                       <p-sortIcon [field]="'correo'"></p-sortIcon>
@@ -47,24 +47,24 @@
                   </th>
                   <th style="min-width: 10rem; max-width: 15rem;" [pSortableColumn]="'direccion'">Dirección
                       <p-sortIcon [field]="'direccion'"></p-sortIcon>
-                     
+
                   </th>
                   <th style="min-width: 8rem; max-width: 10rem;">Cantidad Productos</th>
                   <th style="min-width: 4rem; max-width: 8rem;" [pSortableColumn]="'subtotal'">Subtotal
                       <p-sortIcon [field]="'subtotal'"></p-sortIcon>
-                     
+
                   </th>
                   <th style="min-width: 10rem; max-width: 12rem;" [pSortableColumn]="'iva'">Iva
                       <p-sortIcon [field]="'iva'"></p-sortIcon>
-                     
+
                   </th>
                   <th style="min-width: 10rem; max-width: 16rem;" [pSortableColumn]="'total'">Total
                       <p-sortIcon [field]="'total'"></p-sortIcon>
-                     
+
                   </th>
                   <th style="min-width: 12rem; max-width: 16rem;" [pSortableColumn]="'estado_nombre'">Estado de factura
                       <p-sortIcon [field]="'estado_nombre'"></p-sortIcon>
-                     
+
                   </th>
                   <th style="min-width: 7rem; max-width: 8rem;">Estado</th>
                   <th style="min-width: 15rem; max-width: 18rem;" [pSortableColumn]="'fecha_reg'">Fecha de Registro
@@ -247,6 +247,17 @@
               <span class="text-right">{{ total | currency:'USD' }}</span>
             </div>
 
+            <div class="flex flex-col">
+                <label class="">Notal</label>
+                <input
+                  type="text"
+                  formControlName="nota"
+                  placeholder="Nota"
+                  class="border border-gray-300 rounded-md p-2 w-full"
+                />
+
+              </div>
+
 
           </div>
 
@@ -255,12 +266,13 @@
         <br/><br/>
 
         <div class="flex justify-center">
-          @if(TituloForm === 'Crear factura'){
-            <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onCrear()" />
-          }
-          @if(TituloForm !== 'Crear factura'){
-          <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onEditar()" />
-          }
+            @if (TituloForm === 'Crear factura' || TituloForm === 'Cotizar plantilla') {
+                <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onCrear()" />
+              }
+              @else {
+                <p-button label="Guardar edición" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onEditar()" />
+              }
+
         </div>
         <br/><br/><br/><br/>
         <p-toast />

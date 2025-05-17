@@ -426,17 +426,19 @@ export class FacturasComponent {
             }
         });
     }
+public generarFactoDocto(id: number) {
+    const paddedId = id.toString().padStart(5, '0');
 
-    public generarFactoDocto(id: number) {
-        this.serve.getFactura(id).subscribe((blob) => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'factura.pdf';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        });
-    }
+    this.serve.getFactura(id).subscribe((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${paddedId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+}
+
 
     public onEditar(): void {
         this.serve.PutData(this.form.value).subscribe((res: any) => {

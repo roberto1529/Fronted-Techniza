@@ -31,7 +31,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 })
 export class ClientesComponent implements OnInit {
   usuarios!: clientesDto[];
-  empleadoInfo: any = localStorage.getItem('token'); 
+  empleadoInfo: any = localStorage.getItem('token');
   loading: boolean = true;
   visible: boolean = false;
   @ViewChild('dt2') dt2!: Table; // Definir la referencia correctamente
@@ -71,8 +71,8 @@ export class ClientesComponent implements OnInit {
     ]],
     direccion: ['', [
       Validators.required,
-      Validators.minLength(3),
-      CustomValidators.noWhitespaceValidator,
+    //   Validators.minLength(3),
+    //   CustomValidators.noWhitespaceValidator,
     ]],
     pais: ['', [
       Validators.required,
@@ -91,8 +91,8 @@ export class ClientesComponent implements OnInit {
     empresa: ['', [
       Validators.required,
       Validators.minLength(3),
-      CustomValidators.noWhitespaceValidator,
-      CustomValidators.firstLetterUppercase
+    //   CustomValidators.noWhitespaceValidator,
+    //   CustomValidators.firstLetterUppercase
     ]],
     correo: ['', [Validators.required, Validators.email]],
     idempleado: [''],
@@ -262,7 +262,7 @@ export class ClientesComponent implements OnInit {
   public OnchangeCity(id: any) {
     this.ciudadFiltrada = this.ciudad.filter(c => c.id_pais === id);
   }
-  
+
 
 
 }

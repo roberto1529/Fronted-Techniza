@@ -97,8 +97,8 @@ export class ProductosComponent implements OnInit {
     buscar: [''],
     marca: ['', [
       Validators.required,
-      CustomValidators.noWhitespaceValidator,
-      CustomValidators.firstLetterUppercase
+    //   CustomValidators.noWhitespaceValidator,
+    //   CustomValidators.firstLetterUppercase
     ]],
     estado: [false]
   });

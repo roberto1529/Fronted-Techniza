@@ -1,276 +1,208 @@
 <div class="card">
     <p-toast />
     <h3 class="text-center uppercase">Plantillas</h3>
-    <br>
-      <p-table #dt2
-              [value]="datos"
-              dataKey="id"
-              [rows]="10"
-              [rowsPerPageOptions]="[10, 25, 50]"
-              [loading]="loading"
-              [paginator]="true"
-              [globalFilterFields]="[ 'id','nombre','estado','conteo','cliente']"
-              [tableStyle]="{ 'min-width': '100rem', 'max-width': '150rem', 'width': '100%' }">
-            <ng-template #header>
-              <tr>
-                  <th style="min-width: 2rem; max-width: 5rem;">
-                    #
-                  </th>
-                  <th style="min-width: 12rem; max-width: 15rem;" [pSortableColumn]="'nombre'">Nombre
-                      <p-sortIcon [field]="'nombre'"></p-sortIcon>
-                  </th>
-                  <th style="min-width: 12rem; max-width: 15rem;" [pSortableColumn]="'cliente'">Cliente
+    <br />
+    <p-table
+        #dt2
+        [value]="datos"
+        dataKey="id"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [loading]="loading"
+        [paginator]="true"
+        [globalFilterFields]="['id', 'nombre', 'estado', 'conteo', 'cliente']"
+        [tableStyle]="{ 'min-width': '100rem', 'max-width': '150rem', width: '100%' }"
+    >
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 2rem; max-width: 5rem">#</th>
+                <th style="min-width: 12rem; max-width: 15rem" [pSortableColumn]="'nombre'">
+                    Nombre
+                    <p-sortIcon [field]="'nombre'"></p-sortIcon>
+                </th>
+                <th style="min-width: 12rem; max-width: 15rem" [pSortableColumn]="'cliente'">
+                    Cliente
                     <p-sortIcon [field]="'cliente'"></p-sortIcon>
                 </th>
-                  <th style="min-width: 8rem; max-width: 10rem;">Cantidad Productos</th>
-                  <th style="min-width: 7rem; max-width: 8rem;">Estado</th>
-                  <!-- <th style="min-width: 15rem; max-width: 18rem;" [pSortableColumn]="'fecha_reg'">Fecha de Registro
+                <th style="min-width: 8rem; max-width: 10rem">Cantidad Productos</th>
+                <th style="min-width: 7rem; max-width: 8rem">Estado</th>
+                <!-- <th style="min-width: 15rem; max-width: 18rem;" [pSortableColumn]="'fecha_reg'">Fecha de Registro
                       <p-sortIcon [field]="'fecha_reg'"></p-sortIcon>
                   </th> -->
-                  <th style="min-width: 12rem; max-width: 15rem;">Acciones</th>
-              </tr>
-          </ng-template>
-          <ng-template #caption>
-              <div class="flex gap-2">
-                  <p-button label="Crear" [outlined]="true" icon="pi pi-user-plus" (click)="formModal('Crear plantilla')" />
-                  <p-button label="limpiar" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
-                  <p-iconfield iconPosition="left" class="ml-auto">
-                      <form [formGroup]="form">
-                      <p-inputicon>
-                          <i class="pi pi-search"></i>
-                      </p-inputicon>
+                <th style="min-width: 12rem; max-width: 15rem">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template #caption>
+            <div class="flex gap-2">
+                <p-button label="Crear" [outlined]="true" icon="pi pi-user-plus" (click)="formModal('Crear plantilla')" />
+                <p-button label="limpiar" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt2)" />
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <form [formGroup]="form">
+                        <p-inputicon>
+                            <i class="pi pi-search"></i>
+                        </p-inputicon>
 
-                          <input pInputText type="text" formControlName="buscar" (input)="searchGlobal($event)" placeholder="Buscar">
-                      </form>
-
-                  </p-iconfield>
-              </div>
-          </ng-template>
-          <ng-template #body let-datos let-i="rowIndex">
+                        <input pInputText type="text" formControlName="buscar" (input)="searchGlobal($event)" placeholder="Buscar" />
+                    </form>
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #body let-datos let-i="rowIndex">
             <tr>
-                  <td>{{ i+1 }}</td>
-                  <td>{{ datos.nombre }}</td>
-                  <td>{{ datos.cliente }}</td>
-                  <td>
-                    <p-button
-                      (click)="op.toggle($event); DetalleFactura(datos.id);"
-                      icon="pi pi-box"
-                      severity="info"
-                      label="{{ datos.conteo }}" />
-                  </td>
-                  <td><p-tag
-                      [value]="getStatusNombre(datos.estado)"
-                      [severity]="getSeverity(datos.estado)" />
-                  </td>
-                  <!-- <td>{{ datos.fecha_reg | date:"dd/MM/yyyy h:mm a"}}</td> -->
-                  <td>
-
-                      <form [formGroup]="form" style="    display: flex;
-                          flex-direction: row;
-                          align-content: center;
-                          justify-content: flex-start;
-                          align-items: center;     gap: 8px;">
-                          <p-button icon="pi pi-dollar"  severity="info" pTooltip="Facturar plantilla" tooltipPosition="bottom" (click)="UsarPlantilla(datos.id)"/>
-                          <p-button icon="pi pi-pencil"  severity="warn" pTooltip="Editar" tooltipPosition="bottom" (click)="formModal('Editar plantilla', datos)"/>
-                          <!-- <p-button icon="pi pi-copy" severity="info" pTooltip="Duplicar" tooltipPosition="bottom" (click)="formModal('Duplicar factura', datos)"/> -->
-                          <p-toggleswitch
-                            pTooltip="{{ datos.estado ? 'Activo' : 'Inactivo' }}"
-                            tooltipPosition="bottom"
-                            [formControl]="getEstadoControl(datos)"
-                            (change)="onEstadoChange(datos)"
-                          />
-
-                      </form>
-
-                  </td>
-
-
-              </tr>
-          </ng-template>
-      </p-table>
+                <td>{{ i + 1 }}</td>
+                <td>{{ datos.nombre }}</td>
+                <td>{{ datos.cliente }}</td>
+                <td>
+                    <p-button (click)="op.toggle($event); DetalleFactura(datos.id)" icon="pi pi-box" severity="info" label="{{ datos.conteo }}" />
+                </td>
+                <td><p-tag [value]="getStatusNombre(datos.estado)" [severity]="getSeverity(datos.estado)" /></td>
+                <!-- <td>{{ datos.fecha_reg | date:"dd/MM/yyyy h:mm a"}}</td> -->
+                <td>
+                    <form [formGroup]="form" style="display: flex; flex-direction: row; align-content: center; justify-content: flex-start; align-items: center; gap: 8px">
+                        <p-button icon="pi pi-dollar" severity="info" pTooltip="Facturar plantilla" tooltipPosition="bottom" (click)="UsarPlantilla(datos.id)" />
+                        <p-button icon="pi pi-pencil" severity="warn" pTooltip="Editar" tooltipPosition="bottom" (click)="formModal('Editar plantilla', datos)" />
+                        <!-- <p-button icon="pi pi-copy" severity="info" pTooltip="Duplicar" tooltipPosition="bottom" (click)="formModal('Duplicar factura', datos)"/> -->
+                        <p-toggleswitch pTooltip="{{ datos.estado ? 'Activo' : 'Inactivo' }}" tooltipPosition="bottom" [formControl]="getEstadoControl(datos)" (change)="onEstadoChange(datos)" />
+                    </form>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 </div>
 
 <!-- Formulario -->
-<p-dialog [header]="TituloForm" [maximizable]="false" [draggable]="false" [modal]="true"
-          [(visible)]="visible" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+<p-dialog [header]="TituloForm" [maximizable]="false" [draggable]="false" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
     <form [formGroup]="form">
-
         <!-- Contenedor del formulario -->
         <div class="space-y-6">
+            <!-- Primera fila: Cliente y Botón Agregar Producto (2 columnas) -->
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Cliente -->
+                <div class="flex flex-col gap-2">
+                    <label for="cliente" class="">Nombre</label>
+                    <input type="text" pInputText formControlName="Nonbre" />
 
-          <!-- Primera fila: Cliente y Botón Agregar Producto (2 columnas) -->
-          <div class="grid grid-cols-2 gap-4">
+                    <small *ngFor="let error of getFieldErrors('cliente')" class="text-red-500 text-xs">
+                        {{ error }}
+                    </small>
+                </div>
 
-            <!-- Cliente -->
-            <div class="flex flex-col gap-2">
-              <label for="cliente" class="">Nombre</label>
-              <input type="text" pInputText formControlName="Nonbre" />
+                <div class="flex flex-col gap-2">
+                    <label for="cliente" class="">Cliente</label>
+                    <p-select formControlName="cliente" [filter]="true" [options]="Cleintes" optionValue="id" optionLabel="nombre" placeholder="Seleccione un cliente" class="border border-gray-300 rounded-md p-2"></p-select>
+                    <small *ngFor="let error of getFieldErrors('cliente')" class="text-red-500 text-xs">
+                        {{ error }}
+                    </small>
+                </div>
 
-              <small *ngFor="let error of getFieldErrors('cliente')" class="text-red-500 text-xs">
-                {{ error }}
-              </small>
+                <!-- Botón Agregar Producto -->
+                <div class="flex items-end">
+                    <p-button label="Agregar Producto" icon="pi pi-box" [loading]="loading" (onClick)="agregarProducto()" />
+                </div>
             </div>
 
-            <div class="flex flex-col gap-2">
-                <label for="cliente" class="">Cliente</label>
-                <p-select
-                  formControlName="cliente"
-                  [filter]="true"
-                  [options]="Cleintes"
-                  optionValue="id"
-                  optionLabel="nombre"
-                  placeholder="Seleccione un cliente"
-                  class="border border-gray-300 rounded-md p-2"
-                ></p-select>
-                <small *ngFor="let error of getFieldErrors('cliente')" class="text-red-500 text-xs">
-                  {{ error }}
-                </small>
-              </div>
+            <!-- Lista de Productos -->
+            <div formArrayName="productos" class="space-y-4">
+                <div *ngFor="let producto of productos.controls; let i = index" [formGroupName]="i" class="grid grid-cols-12 gap-3 items-end border-b pb-2">
+                    <!-- Producto (6 columnas) -->
+                    <div class="col-span-5 flex flex-col">
+                        <label for="producto">Producto</label>
+                        <p-select
+                            formControlName="producto"
+                            [filter]="true"
+                            (blur)="form.get('producto')?.markAsTouched()"
+                            [options]="getProductosDisponibles(i)"
+                            optionValue="id"
+                            optionLabel="modelo"
+                            placeholder="Seleccione un producto"
+                            class="border border-gray-300 rounded-md p-2"
+                        ></p-select>
+                        <small *ngIf="productos.at(i).get('producto')?.invalid && productos.at(i).get('producto')?.touched" class="text-red-500 text-xs"> El producto es obligatorio </small>
+                    </div>
 
-            <!-- Botón Agregar Producto -->
-            <div class="flex items-end">
-              <p-button label="Agregar Producto" icon="pi pi-box" [loading]="loading" (onClick)="agregarProducto()" />
+                    <!-- Cantidad (5 columnas) -->
+                    <div class="col-span-5 flex flex-col">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="number" formControlName="cantidad" min="0" (ngModelChange)="actualizarProducto(i)" placeholder="Cantidad" class="border border-gray-300 rounded-md p-2 w-full" />
+                        <small *ngIf="productos.at(i).get('cantidad')?.invalid && productos.at(i).get('cantidad')?.touched" class="text-red-500 text-xs"> El campo es obligatorio </small>
+                    </div>
+
+                    <!-- Botón Eliminar (2 columnas) -->
+                    <div class="col-span-2 flex justify-center">
+                        <p-button icon="pi pi-times" (click)="eliminarProducto(i)" severity="danger" />
+                    </div>
+                </div>
             </div>
-
-          </div>
-
-          <!-- Lista de Productos -->
-          <div formArrayName="productos" class="space-y-4">
-            <div *ngFor="let producto of productos.controls; let i = index" [formGroupName]="i"
-                class="grid grid-cols-4 gap-4 items-center border-b pb-2">
-
-              <!-- Columna 1: Producto -->
-              <div class="flex flex-col">
-                <label for="producto" class="">Producto</label>
-                <p-select
-                  formControlName="producto"
-                  [filter]="true"
-                  (blur)="form.get('producto')?.markAsTouched()"
-                  [options]="getProductosDisponibles(i)"
-                  optionValue="id"
-                  optionLabel="modelo"
-                  placeholder="Seleccione un producto"
-                  class="border border-gray-300 rounded-md p-2"
-                ></p-select>
-                <small *ngIf="productos.at(i).get('producto')?.invalid && productos.at(i).get('producto')?.touched"
-                class="text-red-500 text-xs">
-                    El producto es obligatorio
-                  </small>
-              </div>
-
-              <!-- Columna 2: Cantidad -->
-              <div class="flex flex-col">
-                <label class="">Cantidad</label>
-                <input
-                  type="number"
-                  formControlName="cantidad"
-                  min="0"
-                  (ngModelChange)="actualizarProducto(i)"
-                  placeholder="Cantidad"
-                  class="border border-gray-300 rounded-md p-2 w-full"
-                />
-                <small *ngIf="productos.at(i).get('cantidad')?.invalid && productos.at(i).get('cantidad')?.touched"
-                class="text-red-500 text-xs">
-                    El campo es obligatorio
-                  </small>
-              </div>
-
-
-
-              <!-- Columna 4: Botón Eliminar -->
-              <div class="flex items-end">
-                <br>
-                <p-button  icon="pi pi-times" (click)="eliminarProducto(i)" severity="danger" />
-              </div>
-            </div>
-
-            <!-- <div class="border-t border-gray-300 mt-4 pt-2 grid grid-cols-2 font-bold text-lg">
-              <span class="text-left">Subtotal:</span>
-              <span class="text-right">{{ subtotal | currency:'USD' }}</span>
-
-              <span class="text-left">IVA (16%):</span>
-              <span class="text-right">{{ iva | currency:'USD' }}</span>
-
-              <span class="text-left">Total:</span>
-              <span class="text-right">{{ total | currency:'USD' }}</span>
-            </div> -->
-
-
-          </div>
-
         </div>
 
-        <br/><br/>
+        <br /><br />
 
         <div class="flex justify-center">
-          @if(TituloForm === 'Crear plantilla'){
-            <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onCrear()" />
-          }
-          @if(TituloForm !== 'Crear plantilla'){
-          <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onEditar()" />
-          }
+            @if (TituloForm === 'Crear plantilla') {
+                <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onCrear()" />
+            }
+            @if (TituloForm !== 'Crear plantilla') {
+                <p-button label="Guardar" [disabled]="form.invalid" [outlined]="false" size="large" icon="pi pi-check" iconPos="right" (click)="onEditar()" />
+            }
         </div>
-        <br/><br/><br/><br/>
+        <br /><br /><br /><br />
         <p-toast />
-      </form>
-
+    </form>
 </p-dialog>
 
 <!-- ver detalle de una factura -->
 <p-popover #op>
-  <div class="flex flex-col gap-4 w-[25rem]">
-
-      <div>
-          <span class="font-medium text-surface-900 dark:text-surface-0 block mb-2"></span>
-      </div>
-      <div>
-          <span class="font-medium text-surface-900 dark:text-surface-0 block mb-2">Productos Cotizados</span>
-          <ul class="list-none p-0 m-0 flex flex-col gap-4">
-            @if (!detallefact || detallefact.length === 0) {
-              <li class="flex items-center gap-2">
-                <p-skeleton styleClass="mb-2" />
-                <p-skeleton width="10rem" styleClass="mb-2" />
-                <p-skeleton width="5rem" styleClass="mb-2" />
-                <p-skeleton height="2rem" styleClass="mb-2" />
-                <p-skeleton width="10rem" height="4rem" />
-              </li>
-              <li class="flex items-center gap-2">
-                <p-skeleton styleClass="mb-2" />
-                <p-skeleton width="10rem" styleClass="mb-2" />
-                <p-skeleton width="5rem" styleClass="mb-2" />
-                <p-skeleton height="2rem" styleClass="mb-2" />
-                <p-skeleton width="10rem" height="4rem" />
-              </li>
-              <li class="flex items-center gap-2">
-                <p-skeleton styleClass="mb-2" />
-                <p-skeleton width="10rem" styleClass="mb-2" />
-                <p-skeleton width="5rem" styleClass="mb-2" />
-                <p-skeleton height="2rem" styleClass="mb-2" />
-                <p-skeleton width="10rem" height="4rem" />
-              </li>
-            } @else {
-              @for(datos of detallefact; track datos) {
-                <li class="flex items-center gap-2 card drop-shadow-sm  drop-shadow-xl">
-                  <div class="flex flex-col text-muted-color text-sm">
-                    <div class="flex flex-col">
-                      <h6 class="font-semibold">Marca</h6>
-                      <span class="font-medium">{{ datos.marca }}</span>
-                    </div>
-                    <div class="flex flex-col mt-1">
-                      <h6 class="font-semibold">Modelo</h6>
-                      <span class="text-muted-color">{{ datos.modelo }}</span>
-                    </div>
-                    <div class="flex flex-col mt-1">
-                      <h6 class="font-semibold">Descripción</h6>
-                      <span>{{ datos.descripcion }}</span>
-                    </div>
-                  </div>
-                  <p-badge value="{{datos.cantidad}}" class="ml-auto" />
-                </li>
-
-              }
-            }
-          </ul>
-      </div>
-  </div>
+    <div class="flex flex-col gap-4 w-[25rem]">
+        <div>
+            <span class="font-medium text-surface-900 dark:text-surface-0 block mb-2"></span>
+        </div>
+        <div>
+            <span class="font-medium text-surface-900 dark:text-surface-0 block mb-2">Productos Cotizados</span>
+            <ul class="list-none p-0 m-0 flex flex-col gap-4">
+                @if (!detallefact || detallefact.length === 0) {
+                    <li class="flex items-center gap-2">
+                        <p-skeleton styleClass="mb-2" />
+                        <p-skeleton width="10rem" styleClass="mb-2" />
+                        <p-skeleton width="5rem" styleClass="mb-2" />
+                        <p-skeleton height="2rem" styleClass="mb-2" />
+                        <p-skeleton width="10rem" height="4rem" />
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <p-skeleton styleClass="mb-2" />
+                        <p-skeleton width="10rem" styleClass="mb-2" />
+                        <p-skeleton width="5rem" styleClass="mb-2" />
+                        <p-skeleton height="2rem" styleClass="mb-2" />
+                        <p-skeleton width="10rem" height="4rem" />
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <p-skeleton styleClass="mb-2" />
+                        <p-skeleton width="10rem" styleClass="mb-2" />
+                        <p-skeleton width="5rem" styleClass="mb-2" />
+                        <p-skeleton height="2rem" styleClass="mb-2" />
+                        <p-skeleton width="10rem" height="4rem" />
+                    </li>
+                } @else {
+                    @for (datos of detallefact; track datos) {
+                        <li class="flex items-center gap-2 card drop-shadow-sm drop-shadow-xl">
+                            <div class="flex flex-col text-muted-color text-sm">
+                                <div class="flex flex-col">
+                                    <h6 class="font-semibold">Marca</h6>
+                                    <span class="font-medium">{{ datos.marca }}</span>
+                                </div>
+                                <div class="flex flex-col mt-1">
+                                    <h6 class="font-semibold">Modelo</h6>
+                                    <span class="text-muted-color">{{ datos.modelo }}</span>
+                                </div>
+                                <div class="flex flex-col mt-1">
+                                    <h6 class="font-semibold">Descripción</h6>
+                                    <span>{{ datos.descripcion }}</span>
+                                </div>
+                            </div>
+                            <p-badge value="{{ datos.cantidad }}" class="ml-auto" />
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
 </p-popover>

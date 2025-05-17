@@ -90,8 +90,8 @@ export class ComboxComponent {
         buscar: [''],
         Nonbre: ['', [
             Validators.required,
-            CustomValidators.noWhitespaceValidator,
-            CustomValidators.firstLetterUppercase
+            // CustomValidators.noWhitespaceValidator,
+            // CustomValidators.firstLetterUppercase
         ]],
         cliente: ['', [Validators.required]],
         productos: this.formBuilder.array([]),

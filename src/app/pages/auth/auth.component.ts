@@ -13,7 +13,7 @@ import { SliderComponent } from "./slider/slider.component";
   selector: 'app-auth',
   standalone: true,
   imports: [ButtonModule, FloatLabelModule, IconFieldModule, InputIconModule,
-    DatePickerModule, InputOtpModule, CommonModule, FormularioComponent, SliderComponent],
+    DatePickerModule, InputOtpModule, CommonModule, FormularioComponent],
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss',
 })
